@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en" class="overlay" data-resolution="portrait" data-composition-variables='[
+    {"id":"user","type":"string","label":"Who left the comment (use the real name or handle)","default":"@yourviewer"},
+    {"id":"comment","type":"string","label":"The comment, in their words (a word in *stars* turns yellow)","default":"How did you edit this?"},
+    {"id":"tag","type":"string","label":"Small label on the right (empty to hide)","default":"Comment"},
+    {"id":"y","type":"string","label":"Where the card sits, as a percent from the top","default":"9"},
+    {"id":"look","type":"string","label":"Colours: forest (green, cream, yellow) or plum (the site colours)","default":"forest"},{"id":"layer","type":"string","label":"Which part to draw (set by the script)","default":"all"}
+  ]'>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="stylesheet" href="../assets/brand.css" />
+    <link rel="stylesheet" href="../assets/fx.css" />
+    <script src="../assets/gsap.min.js"></script>
+    <style>
+
+      .card { left: 60px; width: 960px; padding: 34px 38px 40px 176px; min-height: 180px; }
+      .avatar { position: absolute; left: 36px; top: 36px; width: 108px; height: 108px; border-radius: 50%; background: var(--forest); border: 1px solid var(--hair); display: flex; align-items: center; justify-content: center; font-size: 66px; line-height: 1; }
+      .row { display: flex; justify-content: space-between; }
+      #tag { color: var(--yellow); }
+      #comment { font-size: 64px; line-height: 1.06; margin-top: 16px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="comment-drop" data-start="0" data-duration="4" data-width="1080" data-height="1920">
+      <div class="fx">
+
+        <div class="front">
+          <div class="block card" id="card">
+            <div class="avatar serif" id="avatar"></div>
+            <div class="row"><div class="mono" id="user"></div><div class="mono" id="tag"></div></div>
+            <div class="serif" id="comment"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../assets/fx-kit.js"></script>
+    <script>
+
+      const { v, el, num, rich } = fx;
+      const user = String(v.user).trim();
+      el("user").textContent = user;
+      el("avatar").textContent = user.replace(/^@/, "").slice(0, 1).toUpperCase();
+      el("tag").textContent = v.tag;
+      el("comment").innerHTML = rich(v.comment);
+      el("card").style.top = (num("y", 9) / 100) * 1920 + "px";
+
+      const tl = gsap.timeline({ paused: true });
+      tl.from("#card", { y: -520, rotation: -3, duration: 0.38, ease: "power3.out" }, 0);
+      tl.from("#comment", { opacity: 0, y: 14, duration: 0.25, ease: "power2.out" }, 0.3);
+      fx.done("comment-drop", tl);
+    </script>
+  </body>
+</html>

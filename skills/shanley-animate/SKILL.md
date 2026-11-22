@@ -24,12 +24,15 @@ node "{{PACK}}/scripts/make.mjs" list
 
 ## Effects on your own footage
 
-Two editorial effects go onto a stretch of the person's talking-head video. The speaker is cut out on their computer, so type can sit behind their head. The original sound is kept.
+Three effects go onto a stretch of the person's talking-head video. The speaker is cut out on their computer, so type can sit behind their head. The original sound is kept.
 
 | Name | What it does |
 |---|---|
 | `cover-masthead` | Magazine cover: a huge serif word behind the head, an issue line above it, a corner label, a barcode sticker and a caption box |
 | `backdrop-word` | The room is replaced by a solid colour, with giant italic two-colour words drifting behind the speaker and a caption box |
+| `clone-row` | Copies of the speaker step out from behind them, right and left. It has no type and its own settings: use the `clone-row` skill |
+
+Twenty more effects (doors, slice, shockwave, banknote, newspaper, dust and others) are in the `shanley-fx` skill; `effect.mjs list` shows them all.
 
 ```bash
 node "{{PACK}}/scripts/effect.mjs" cover-masthead --video /path/to/take.mp4 --from 12 --to 16 \

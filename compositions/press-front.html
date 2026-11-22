@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en" class="overlay" data-resolution="portrait" data-composition-variables='[
+    {"id":"paper","type":"string","label":"Name of the newspaper","default":"The Daily Edit"},
+    {"id":"date","type":"string","label":"Line under the name, parts separated by |","default":"Vol. 01|Late edition|New York"},
+    {"id":"headline","type":"string","label":"The headline (a word in *stars* gets a yellow marker)","default":"Local woman lets Claude *edit*"},
+    {"id":"caption","type":"string","label":"Line under the picture","default":"Pictured: the editor, not editing."},
+    {"id":"look","type":"string","label":"Colours: forest (green, cream, yellow) or plum (the site colours)","default":"forest"},{"id":"layer","type":"string","label":"Which part to draw (set by the script)","default":"all"}
+  ]'>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="stylesheet" href="../assets/brand.css" />
+    <link rel="stylesheet" href="../assets/fx.css" />
+    <script src="../assets/gsap.min.js"></script>
+    <style>
+
+      /* The picture window is a see-through hole; its huge shadow is the paper around it. */
+      #hole { position: absolute; left: 60px; top: 720px; width: 960px; height: 860px; box-shadow: 0 0 0 3000px #efe8dc; }
+      #frame { position: absolute; left: 60px; top: 720px; width: 960px; height: 860px; border: 2px solid #14201a; }
+      .ink { color: #14201a; }
+      #date { position: absolute; left: 60px; width: 960px; top: 96px; display: flex; justify-content: space-between; padding-bottom: 14px; border-bottom: 2px solid #14201a; font-size: 21px; letter-spacing: 0.2em; }
+      #name { position: absolute; left: 0; width: 1080px; top: 132px; text-align: center; font-size: 150px; line-height: 1; white-space: nowrap; }
+      #rule { position: absolute; left: 60px; width: 960px; top: 302px; height: 10px; border-top: 4px solid #14201a; border-bottom: 1px solid #14201a; }
+      #headline { position: absolute; left: 60px; width: 960px; top: 340px; height: 350px; display: flex; align-items: center; font-size: 108px; line-height: 0.98; }
+      #headline em { font-style: normal; color: #14201a; background: #f5cf45; padding: 0 12px; }
+      #caption { position: absolute; left: 60px; top: 1598px; font-size: 20px; letter-spacing: 0.14em; }
+      .col { position: absolute; top: 1660px; width: 300px; height: 150px; background: repeating-linear-gradient(180deg, rgba(20, 32, 26, 0.55) 0 3px, transparent 3px 19px); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="press-front" data-start="0" data-duration="4" data-width="1080" data-height="1920">
+      <div class="fx">
+
+        <div id="hole"></div>
+        <div id="frame"></div>
+        <div class="mono ink" id="date"></div>
+        <div class="serif ink" id="name"></div>
+        <div id="rule"></div>
+        <div class="serif ink" id="headline"><div id="hl"></div></div>
+        <div class="mono ink" id="caption"></div>
+        <div class="col" style="left:60px"></div><div class="col" style="left:390px"></div><div class="col" style="left:720px"></div>
+      </div>
+    </div>
+    <script src="../assets/fx-kit.js"></script>
+    <script>
+
+      const { v, el, esc, rich, list } = fx;
+      const paper = String(v.paper).trim();
+      el("name").textContent = paper;
+      el("name").style.fontSize = Math.min(150, Math.round(2050 / Math.max(paper.length, 8))) + "px";
+      el("date").innerHTML = list(v.date).map((p) => `<span>${esc(p)}</span>`).join("");
+      el("hl").innerHTML = rich(v.headline);
+      const letters = String(v.headline).replace(/\*/g, "").length;
+      el("headline").style.fontSize = Math.max(64, Math.min(118, Math.round(3300 / Math.max(letters, 14)))) + "px";
+      el("caption").textContent = v.caption;
+      const tl = gsap.timeline({ paused: true });
+      tl.from("#name", { y: -30, opacity: 0, duration: 0.25, ease: "power3.out" }, 0.05);
+      tl.from("#hl", { y: 40, opacity: 0, duration: 0.3, ease: "power3.out" }, 0.15);
+      tl.from("#caption", { opacity: 0, duration: 0.2 }, 0.4);
+      fx.done("press-front", tl);
+    </script>
+  </body>
+</html>

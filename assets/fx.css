@@ -1,0 +1,48 @@
+/* Shared colours and parts for the effects drawn over your own footage (the forest look by default). */
+:root {
+  --forest: #203028;
+  --deep: #1a2821;
+  --bar: #14201a;
+  --hair: #3c5246;
+  --cream: #f0e8e0;
+  --second: #d0d0c0;
+  --khaki: #b8b088;
+  --yellow: #f5cf45;
+}
+/* look=plum swaps in the site colours. */
+html.plum {
+  --forest: #2e1a2b;
+  --deep: #24141f;
+  --bar: #1c0f1a;
+  --hair: #5a3753;
+  --cream: #faf7f2;
+  --second: #e6dbe3;
+  --khaki: #dcb9d3;
+  --yellow: #dcb9d3;
+}
+.mono {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: 24px;
+  color: var(--khaki);
+  white-space: nowrap;
+}
+.serif {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--cream);
+}
+.serif em {
+  font-style: normal;
+  color: var(--yellow);
+}
+/* A flat block: deeper green, hairline edge, nearly square corners. */
+.block {
+  position: absolute;
+  background: var(--deep);
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+}

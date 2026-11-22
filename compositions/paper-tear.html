@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en" class="overlay" data-resolution="portrait" data-composition-variables='[
+    {"id":"word","type":"string","label":"The words in the tear (a word in *stars* turns yellow)","default":"The *truth*"},
+    {"id":"label","type":"string","label":"Small line above the words (empty to hide)","default":""},
+    {"id":"y","type":"string","label":"Where the middle of the tear sits, as a percent from the top (empty: across the top of your head)","default":""},
+    {"id":"height","type":"string","label":"Height of the tear, in pixels","default":"400"},
+    {"id":"paper","type":"string","label":"Colour of the torn paper edge","default":"#efe6d6"},
+    {"id":"headTop","type":"string","label":"Top of your head in pixels (set by the script)","default":"800"},{"id":"centreX","type":"string","label":"Middle of you in pixels (set by the script)","default":"540"},{"id":"look","type":"string","label":"Colours: forest (green, cream, yellow) or plum (the site colours)","default":"forest"},{"id":"layer","type":"string","label":"Which part to draw (set by the script)","default":"all"}
+  ]'>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="stylesheet" href="../assets/brand.css" />
+    <link rel="stylesheet" href="../assets/fx.css" />
+    <script src="../assets/gsap.min.js"></script>
+    <style>
+
+      #tear { position: absolute; left: 0; width: 1080px; filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.45)); }
+      #paper, #ground { position: absolute; inset: 0; }
+      #ground { background: var(--forest); box-shadow: inset 0 26px 30px -18px rgba(0, 0, 0, 0.55); }
+      #words { position: absolute; left: 0; width: 1080px; text-align: center; white-space: nowrap; line-height: 1; }
+      #label { position: absolute; left: 0; width: 1080px; text-align: center; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="paper-tear" data-start="0" data-duration="4" data-width="1080" data-height="1920">
+      <div class="fx">
+
+        <div class="behind">
+          <div id="tear">
+            <div id="paper"></div>
+            <div id="ground"></div>
+            <div class="mono" id="label"></div>
+            <div class="serif" id="words"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../assets/fx-kit.js"></script>
+    <script>
+
+      const { v, el, num, rich, rnd } = fx;
+      const H = num("height", 400);
+      const mid = String(v.y).trim() ? (num("y", 40) / 100) * 1920 : num("headTop", 800) + 40;
+      const tear = el("tear");
+      Object.assign(tear.style, { top: Math.round(mid - H / 2) + "px", height: H + "px" });
+      // Two ragged outlines: the paper edge, and the hole a little inside it.
+      const ragged = (inset, seed, rough) => {
+        const pts = [];
+        const n = 46;
+        for (let i = 0; i <= n; i++) pts.push(`${((i / n) * 100).toFixed(2)}% ${(inset + rough * rnd(seed + i)).toFixed(1)}px`);
+        for (let i = n; i >= 0; i--) pts.push(`${((i / n) * 100).toFixed(2)}% ${(H - inset - rough * rnd(seed + 100 + i)).toFixed(1)}px`);
+        return `polygon(${pts.join(",")})`;
+      };
+      el("paper").style.background = v.paper;
+      el("paper").style.clipPath = ragged(0, 1, 22);
+      el("ground").style.clipPath = ragged(20, 300, 26);
+      const words = el("words");
+      words.innerHTML = rich(v.word);
+      const plain = String(v.word).replace(/\*/g, "");
+      const size = Math.round(Math.min(H * 0.62, 1900 / Math.max(plain.length, 4)));
+      words.style.fontSize = size + "px";
+      const hasLabel = String(v.label).trim();
+      words.style.top = Math.round(H / 2 - size * 0.52 + (hasLabel ? 20 : 0)) + "px";
+      el("label").textContent = v.label;
+      el("label").style.top = Math.round(H / 2 - size * 0.52 - 26) + "px";
+      if (!hasLabel) fx.hide("label");
+
+      // The strip is ripped off from left to right.
+      const tl = gsap.timeline({ paused: true });
+      const rip = { p: 0 };
+      const show = () => (tear.style.clipPath = `inset(-60px ${((1 - rip.p) * 100).toFixed(2)}% -60px 0)`);
+      show();
+      tl.to(rip, { p: 1, duration: 0.45, ease: "power2.inOut", onUpdate: show }, 0);
+      tl.from("#words", { opacity: 0, x: -40, duration: 0.3, ease: "power3.out" }, 0.25);
+      tl.from("#label", { opacity: 0, duration: 0.2 }, 0.4);
+      fx.done("paper-tear", tl);
+    </script>
+  </body>
+</html>

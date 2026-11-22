@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en" class="overlay" data-resolution="portrait" data-composition-variables='[
+    {"id":"caller","type":"string","label":"Who is calling","default":"Claude"},
+    {"id":"label","type":"string","label":"Small line above the name","default":"Incoming call"},
+    {"id":"answer","type":"string","label":"Seconds until the call is picked up (0: it keeps ringing)","default":"1.8"},
+    {"id":"answered","type":"string","label":"Small line once it is picked up","default":"Connected"},
+    {"id":"y","type":"string","label":"Where the card sits, as a percent from the top","default":"8"},
+    {"id":"look","type":"string","label":"Colours: forest (green, cream, yellow) or plum (the site colours)","default":"forest"},{"id":"layer","type":"string","label":"Which part to draw (set by the script)","default":"all"}
+  ]'>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="stylesheet" href="../assets/brand.css" />
+    <link rel="stylesheet" href="../assets/fx.css" />
+    <script src="../assets/gsap.min.js"></script>
+    <style>
+
+      .card { left: 60px; width: 960px; height: 220px; }
+      .avatar { position: absolute; left: 34px; top: 40px; width: 140px; height: 140px; border-radius: 50%; background: var(--forest); border: 1px solid var(--hair); display: flex; align-items: center; justify-content: center; font-size: 84px; line-height: 1; }
+      .ring { position: absolute; left: 34px; top: 40px; width: 140px; height: 140px; border-radius: 50%; border: 2px solid var(--yellow); opacity: 0; }
+      .who { position: absolute; left: 206px; top: 50px; }
+      .who .serif { font-size: 84px; line-height: 1; margin-top: 14px; white-space: nowrap; }
+      .btn { position: absolute; top: 60px; width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+      .btn svg { width: 46px; height: 46px; }
+      #decline { right: 156px; border: 1px solid var(--hair); }
+      #decline svg { transform: rotate(135deg); fill: var(--second); }
+      #accept { right: 34px; background: var(--yellow); }
+      #accept svg { fill: var(--bar); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="incoming-call" data-start="0" data-duration="4" data-width="1080" data-height="1920">
+      <div class="fx">
+
+        <div class="front">
+          <div class="block card" id="card">
+            <div class="ring" id="ring"></div>
+            <div class="avatar serif" id="avatar"></div>
+            <div class="who"><div class="mono" id="label"></div><div class="mono" id="answered" style="position:absolute;left:0;top:0;color:var(--yellow);opacity:0"></div><div class="serif" id="caller"></div></div>
+            <div class="btn" id="decline"><svg viewBox="0 0 24 24"><path d="M6 3h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 4 5a2 2 0 0 1 2-2z" /></svg></div>
+            <div class="btn" id="accept"><svg viewBox="0 0 24 24"><path d="M6 3h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 4 5a2 2 0 0 1 2-2z" /></svg></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../assets/fx-kit.js"></script>
+    <script>
+
+      const { v, el, num } = fx;
+      const caller = String(v.caller).trim();
+      el("caller").textContent = caller;
+      el("avatar").textContent = caller.slice(0, 1).toUpperCase();
+      el("label").textContent = v.label;
+      el("answered").textContent = v.answered;
+      el("card").style.top = (num("y", 8) / 100) * 1920 + "px";
+      const answer = num("answer", 1.8);
+
+      const tl = gsap.timeline({ paused: true });
+      tl.from("#card", { y: -420, duration: 0.35, ease: "power3.out" }, 0);
+      const rings = answer > 0 ? Math.max(1, Math.floor((answer - 0.35) / 0.6)) : 5;
+      for (let i = 0; i < rings; i++) tl.fromTo("#ring", { scale: 1, opacity: 0.9 }, { scale: 1.5, opacity: 0, duration: 0.55, ease: "power1.out" }, 0.4 + i * 0.6);
+      if (answer > 0) {
+        tl.to("#accept", { scale: 0.86, duration: 0.08, ease: "power2.in" }, answer);
+        tl.to("#accept", { scale: 1, duration: 0.14, ease: "power3.out" }, answer + 0.08);
+        tl.set("#decline", { opacity: 0 }, answer + 0.08);
+        tl.set("#label", { opacity: 0 }, answer + 0.08);
+        tl.set("#answered", { opacity: 1 }, answer + 0.08);
+      }
+      fx.done("incoming-call", tl);
+    </script>
+  </body>
+</html>

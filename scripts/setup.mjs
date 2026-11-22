@@ -42,4 +42,11 @@ console.log("Checking the render browser (the first run downloads it)");
 const cli = path.join(PACK, "node_modules", "hyperframes", "bin", "hyperframes.mjs");
 if (spawnSync(process.execPath, [cli, "browser", "ensure"], { stdio: "inherit", cwd: PACK }).status !== 0) fail("Could not set up the render browser.");
 
-console.log("\nReady. Start a new Claude Code chat and type /shanley-animate");
+// The second set of effects (vendor/claude-video-effects) needs Python. It is optional: the rest works without it.
+const second = path.join(PACK, "vendor", "claude-video-effects", "scripts", "setup.sh");
+if (fs.existsSync(second) && process.platform !== "win32") {
+  console.log("Setting up the second set of effects (the first time takes 1 to 3 minutes)");
+  if (spawnSync("bash", [second], { stdio: "inherit" }).status !== 0) console.log("The second set of effects is not set up yet. Everything else is ready.");
+}
+
+console.log("\nReady. Start a new Claude Code chat and type /shanley-animate or /shanley-fx");

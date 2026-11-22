@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en" class="overlay solid" data-resolution="portrait" data-composition-variables='[
+    {"id":"text","type":"string","label":"The code, lines separated by line breaks (set by the script from your file; empty: a built-in sample)","default":""},
+    {"id":"look","type":"string","label":"Colours: forest (green, cream, yellow) or plum (the site colours)","default":"forest"},{"id":"layer","type":"string","label":"Which part to draw (set by the script)","default":"all"}
+  ]'>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="stylesheet" href="../assets/brand.css" />
+    <link rel="stylesheet" href="../assets/fx.css" />
+    <script src="../assets/gsap.min.js"></script>
+    <style>
+
+      html.solid, html.solid body { background: #0b120e; }
+      #scroll { position: absolute; left: 0; top: 0; width: 1080px; }
+      .ln { height: 44px; line-height: 44px; padding-left: 26px; font-family: var(--font-mono); font-size: 29px; white-space: pre; color: #f0e8e0; overflow: hidden; }
+      .ln b { font-weight: 500; color: #f5cf45; }
+      .ln i { font-style: normal; color: #b8b088; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="code-rain" data-start="0" data-duration="4" data-width="1080" data-height="1920">
+      <div class="fx">
+
+        <div id="scroll"></div>
+      </div>
+    </div>
+    <script src="../assets/fx-kit.js"></script>
+    <script>
+
+      const { v, el, esc } = fx;
+      const sample = [
+        "import { cut, caption, grade } from \"./edit\";", "", "// one sentence in, one finished video out",
+        "export async function edit(take, brief) {", "  const words = await transcribe(take);", "  const beats = plan(words, brief);", "",
+        "  for (const beat of beats) {", "    cut(take, beat.from, beat.to);", "    caption(beat.words, { style: \"serif\" });", "    if (beat.effect) apply(beat.effect, beat);", "  }", "",
+        "  grade(take, { look: \"forest\" });", "  return render(take, { size: \"1080x1920\" });", "}",
+      ];
+      let lines = String(v.text).trim() ? String(v.text).split(/\r?\n/) : sample;
+      // Exactly 16 lines scroll past in the 4 seconds, so the film loops without a jump.
+      while (lines.length < 16) lines = lines.concat(lines);
+      lines = lines.slice(0, 16);
+      const paint = (s) => esc(s).replace(/(\/\/.*)$/, "<i>$1</i>").replace(/\b(import|export|from|const|let|for|of|if|return|async|await|function)\b/g, "<b>$1</b>");
+      const html = lines.map((l) => `<div class="ln">${paint(l) || " "}</div>`).join("");
+      el("scroll").innerHTML = html.repeat(5);
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#scroll", { y: 0 }, { y: -16 * 44, duration: 4, ease: "none" }, 0);
+      fx.done("code-rain", tl);
+    </script>
+  </body>
+</html>

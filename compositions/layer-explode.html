@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en" class="overlay" data-resolution="portrait" data-composition-variables='[
+    {"id":"labels","type":"string","label":"Names of the three layers, back to front, separated by |","default":"Room|You|Captions"},
+    {"id":"caption","type":"string","label":"Words on the front layer (a word in *stars* turns yellow)","default":"Three *layers*"},
+    {"id":"look","type":"string","label":"Colours: forest (green, cream, yellow) or plum (the site colours)","default":"forest"},{"id":"layer","type":"string","label":"Which part to draw (set by the script)","default":"all"}
+  ]'>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="stylesheet" href="../assets/brand.css" />
+    <link rel="stylesheet" href="../assets/fx.css" />
+    <script src="../assets/gsap.min.js"></script>
+    <style>
+
+      .tagc { position: absolute; padding: 8px 14px 9px; background: var(--bar); border: 1px solid var(--hair); color: var(--cream); font-size: 22px; }
+      .tagc b { font-weight: 500; color: var(--yellow); margin-right: 14px; }
+      #card { position: absolute; left: 238px; top: 422px; width: 604px; height: 1076px; border: 2px solid rgba(240, 232, 224, 0.6); background: rgba(26, 40, 33, 0.28); }
+      #cap { position: absolute; left: 50%; bottom: 150px; transform: translateX(-50%); padding: 8px 26px 14px; background: var(--bar); box-shadow: 0 0 0 1px rgba(240, 232, 224, 0.14); font-size: 62px; line-height: 1.05; white-space: nowrap; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="layer-explode" data-start="0" data-duration="4" data-width="1080" data-height="1920">
+      <div class="fx">
+
+        <div class="front">
+          <div id="card"><div class="serif" id="cap"></div></div>
+          <div class="mono tagc" id="t0" style="left:86px;top:216px"></div>
+          <div class="mono tagc" id="t1" style="left:254px;top:438px"></div>
+          <div class="mono tagc" id="t2" style="left:422px;top:660px"></div>
+        </div>
+      </div>
+    </div>
+    <script src="../assets/fx-kit.js"></script>
+    <script>
+
+      const { v, el, esc, rich, list } = fx;
+      const names = list(v.labels);
+      [0, 1, 2].forEach((i) => (el("t" + i).innerHTML = `<b>0${i + 1}</b>${esc(names[i] ?? "")}`));
+      el("cap").innerHTML = rich(v.caption);
+      if (!String(v.caption).trim()) fx.hide("cap");
+      // The front card slides out at the same pace as the room card behind (see effects.mjs).
+      const tl = gsap.timeline({ paused: true });
+      tl.to("#card", { x: 168, y: 222, duration: 0.5, ease: "power3.out" }, 0);
+      tl.from(".tagc", { opacity: 0, y: 10, duration: 0.2, stagger: 0.08 }, 0.45);
+      fx.done("layer-explode", tl);
+    </script>
+  </body>
+</html>

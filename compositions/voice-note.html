@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en" class="overlay" data-resolution="portrait" data-composition-variables='[
+    {"id":"label","type":"string","label":"Small line above the waveform","default":"Voice note"},
+    {"id":"from","type":"string","label":"Who it is from, on the right (empty to hide)","default":""},
+    {"id":"y","type":"string","label":"Where the card sits, as a percent from the top","default":"8"},
+    {"id":"bars","type":"string","label":"Loudness of your voice over the stretch (set by the script)","default":"30|55|80|45|62|90|38|70|52|84|40|66|58|76|34|88|48|72|60|42|82|36|68|54|78|44|64|86|50|74|32|58|80|46|70|40"},
+    {"id":"seconds","type":"string","label":"Length of the stretch in seconds (set by the script)","default":"4"},
+    {"id":"look","type":"string","label":"Colours: forest (green, cream, yellow) or plum (the site colours)","default":"forest"},{"id":"layer","type":"string","label":"Which part to draw (set by the script)","default":"all"}
+  ]'>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="stylesheet" href="../assets/brand.css" />
+    <link rel="stylesheet" href="../assets/fx.css" />
+    <script src="../assets/gsap.min.js"></script>
+    <style>
+
+      .card { left: 60px; width: 960px; height: 220px; }
+      #play { position: absolute; left: 36px; top: 54px; width: 112px; height: 112px; border-radius: 50%; background: var(--yellow); }
+      #play::after { content: ""; position: absolute; left: 44px; top: 34px; border-style: solid; border-width: 22px 0 22px 34px; border-color: transparent transparent transparent var(--bar); }
+      .top { position: absolute; left: 184px; right: 38px; top: 34px; display: flex; justify-content: space-between; }
+      #wave { position: absolute; left: 184px; right: 150px; top: 86px; height: 100px; display: flex; align-items: center; justify-content: space-between; }
+      #wave i { display: block; width: 8px; border-radius: 2px; background: var(--hair); }
+      #time { position: absolute; right: 38px; top: 118px; color: var(--cream); font-size: 28px; letter-spacing: 0.08em; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="voice-note" data-start="0" data-duration="4" data-width="1080" data-height="1920">
+      <div class="fx">
+
+        <div class="front">
+          <div class="block card" id="card">
+            <div id="play"></div>
+            <div class="top"><div class="mono" id="label"></div><div class="mono" id="from"></div></div>
+            <div id="wave"></div>
+            <div class="mono" id="time">0:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../assets/fx-kit.js"></script>
+    <script>
+
+      const { v, el, num, list } = fx;
+      el("label").textContent = v.label;
+      el("from").textContent = v.from;
+      el("card").style.top = (num("y", 8) / 100) * 1920 + "px";
+      const levels = list(v.bars).map(Number);
+      el("wave").innerHTML = levels.map((l) => `<i style="height:${Math.max(8, Math.round(l))}%"></i>`).join("");
+      const bars = [...el("wave").children];
+      const seconds = Math.max(0.5, num("seconds", 4));
+      // The film is as long as the stretch, so the waveform plays through all of it.
+      el("root").dataset.duration = String(Math.ceil(seconds * 30) / 30);
+
+      const tl = gsap.timeline({ paused: true });
+      tl.from("#card", { y: -420, duration: 0.35, ease: "power3.out" }, 0);
+      const play = { p: 0 };
+      tl.to(play, {
+        p: 1, duration: seconds, ease: "none",
+        onUpdate: () => {
+          const upTo = play.p * bars.length;
+          bars.forEach((b, i) => (b.style.background = i < upTo ? "#f0e8e0" : ""));
+          const s = Math.floor(play.p * seconds);
+          el("time").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+        },
+      }, 0);
+      fx.done("voice-note", tl);
+    </script>
+  </body>
+</html>
