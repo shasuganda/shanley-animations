@@ -1,0 +1,241 @@
+<!doctype html>
+<html
+  lang="en"
+  data-resolution="portrait"
+  data-composition-variables='[
+    {"id":"eyebrow","type":"string","label":"Small line above the title","default":"Fabric decision"},
+    {"id":"title","type":"string","label":"Title (wrap a word in *stars* for italic mauve)","default":"Which one *wins?*"},
+    {"id":"leftName","type":"string","label":"Left swatch name","default":"Cotton twill"},
+    {"id":"rightName","type":"string","label":"Right swatch name","default":"Recycled nylon"},
+    {"id":"leftColor","type":"color","label":"Left swatch colour","default":"#b9a58c"},
+    {"id":"rightColor","type":"color","label":"Right swatch colour","default":"#3f4a5a"},
+    {"id":"specLabels","type":"string","label":"Row labels, separated by |","default":"Weight|Price per yard|Hand feel"},
+    {"id":"leftSpecs","type":"string","label":"Left values, separated by |","default":"8 oz|$6.40|Dry, crisp"},
+    {"id":"rightSpecs","type":"string","label":"Right values, separated by |","default":"4 oz|$9.10|Smooth, light"},
+    {"id":"winner","type":"string","label":"Winner: left, right or none","default":"left"},
+    {"id":"winnerLabel","type":"string","label":"Stamp text on the winner","default":"The pick"},
+    {"id":"signature","type":"string","label":"Corner signature (empty to hide)","default":"Shanley AI"}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="stylesheet" href="../assets/brand.css" />
+    <script src="../assets/gsap.min.js"></script>
+    <style>
+      .head {
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        top: 250px;
+      }
+      .head .headline {
+        margin-top: 22px;
+      }
+      .swatches {
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        top: 640px;
+        display: flex;
+        gap: 40px;
+      }
+      .swatch {
+        position: relative;
+        flex: 1;
+      }
+      /* The cloth: a colour block with a woven texture and pinked (zigzag) top and bottom edges. */
+      .cloth {
+        position: relative;
+        height: 520px;
+        border-radius: 6px;
+        box-shadow: 0 30px 60px rgba(26, 26, 26, 0.18);
+        background-color: var(--c);
+        background-image:
+          repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0 3px, transparent 3px 9px),
+          repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.1) 0 3px, transparent 3px 9px),
+          linear-gradient(160deg, rgba(255, 255, 255, 0.16), rgba(0, 0, 0, 0.14));
+        clip-path: polygon(
+          0 14px, 5% 0, 10% 14px, 15% 0, 20% 14px, 25% 0, 30% 14px, 35% 0, 40% 14px, 45% 0, 50% 14px,
+          55% 0, 60% 14px, 65% 0, 70% 14px, 75% 0, 80% 14px, 85% 0, 90% 14px, 95% 0, 100% 14px,
+          100% calc(100% - 14px), 95% 100%, 90% calc(100% - 14px), 85% 100%, 80% calc(100% - 14px),
+          75% 100%, 70% calc(100% - 14px), 65% 100%, 60% calc(100% - 14px), 55% 100%,
+          50% calc(100% - 14px), 45% 100%, 40% calc(100% - 14px), 35% 100%, 30% calc(100% - 14px),
+          25% 100%, 20% calc(100% - 14px), 15% 100%, 10% calc(100% - 14px), 5% 100%, 0 calc(100% - 14px)
+        );
+      }
+      /* A pin holding the swatch. */
+      .pin {
+        position: absolute;
+        left: 50%;
+        top: -22px;
+        width: 44px;
+        height: 44px;
+        margin-left: -22px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 30%, #fff 0 14%, var(--mauve) 16% 70%, var(--mauve-deep) 100%);
+        box-shadow: 0 10px 14px rgba(26, 26, 26, 0.28);
+        z-index: 3;
+      }
+      .name {
+        margin-top: 34px;
+        font-family: var(--font-display);
+        font-size: 64px;
+        line-height: 1.02;
+        min-height: 132px;
+      }
+      .specs {
+        margin-top: 22px;
+        border-top: 2px solid var(--ink);
+      }
+      .spec {
+        padding: 22px 0 20px;
+        border-bottom: 2px solid var(--line);
+      }
+      .spec .k {
+        font-size: 24px;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-subtle);
+      }
+      .spec .v {
+        margin-top: 6px;
+        font-size: 46px;
+        font-weight: 600;
+        line-height: 1.1;
+      }
+      /* Stitched outline and stamp for the winner. */
+      .stitch {
+        position: absolute;
+        left: -20px;
+        right: -20px;
+        top: -34px;
+        bottom: -26px;
+        border: 5px dashed var(--mauve);
+        border-radius: 28px;
+        opacity: 0;
+        z-index: 1;
+      }
+      .stamp {
+        position: absolute;
+        right: -14px;
+        top: 392px;
+        padding: 16px 30px 18px;
+        background: var(--mauve);
+        color: var(--cream);
+        font-size: 34px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        border-radius: 10px;
+        box-shadow: 0 16px 30px rgba(90, 55, 83, 0.4);
+        z-index: 4;
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="swatch-compare"
+      data-start="0"
+      data-duration="6"
+      data-width="1080"
+      data-height="1920"
+    >
+     <div class="stage">
+      <div class="head">
+        <div class="eyebrow" id="eyebrow"></div>
+        <h1 class="headline" id="title"></h1>
+      </div>
+
+      <div class="swatches">
+        <div class="swatch" id="left">
+          <div class="stitch"></div>
+          <div class="pin"></div>
+          <div class="cloth"></div>
+          <div class="stamp"></div>
+          <div class="name"></div>
+          <div class="specs"></div>
+        </div>
+        <div class="swatch" id="right">
+          <div class="stitch"></div>
+          <div class="pin"></div>
+          <div class="cloth"></div>
+          <div class="stamp"></div>
+          <div class="name"></div>
+          <div class="specs"></div>
+        </div>
+      </div>
+
+      <div class="signature" id="signature"></div>
+     </div>
+    </div>
+
+    <script>
+      const v = window.__hyperframes.getVariables();
+      const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const rich = (s) => esc(s).replace(/\*(.+?)\*/g, "<em>$1</em>");
+      const list = (s) => String(s).split("|").map((x) => x.trim());
+
+      document.getElementById("eyebrow").textContent = v.eyebrow;
+      document.getElementById("title").innerHTML = rich(v.title);
+      document.getElementById("signature").textContent = v.signature;
+
+      const labels = list(v.specLabels);
+      const fill = (id, name, color, specs) => {
+        const el = document.getElementById(id);
+        el.querySelector(".cloth").style.setProperty("--c", color);
+        el.querySelector(".name").textContent = name;
+        el.querySelector(".stamp").textContent = v.winnerLabel;
+        const values = list(specs);
+        el.querySelector(".specs").innerHTML = labels
+          .map((k, i) => `<div class="spec"><div class="k">${esc(k)}</div><div class="v">${esc(values[i] ?? "")}</div></div>`)
+          .join("");
+      };
+      fill("left", v.leftName, v.leftColor, v.leftSpecs);
+      fill("right", v.rightName, v.rightColor, v.rightSpecs);
+
+      const tl = gsap.timeline({ paused: true });
+
+      // Title
+      tl.from("#eyebrow", { opacity: 0, y: 24, duration: 0.45, ease: "power3.out" }, 0.1);
+      tl.from("#title", { opacity: 0, y: 46, duration: 0.6, ease: "power3.out" }, 0.22);
+
+      // Swatches swing in from each side, as if pinned to a board.
+      tl.from("#left .cloth, #left .pin", { opacity: 0, x: -260, rotation: -10, duration: 0.7, ease: "back.out(1.3)" }, 0.75);
+      tl.from("#right .cloth, #right .pin", { opacity: 0, x: 260, rotation: 10, duration: 0.7, ease: "back.out(1.3)" }, 0.9);
+      tl.from(".swatch .name", { opacity: 0, y: 26, duration: 0.45, ease: "power3.out", stagger: 0.12 }, 1.35);
+
+      tl.from(".specs", { opacity: 0, duration: 0.3 }, 1.7);
+
+      // Spec rows land one pair at a time so the eye compares across.
+      labels.forEach((_, i) => {
+        const at = 1.85 + i * 0.42;
+        tl.from(`#left .spec:nth-child(${i + 1})`, { opacity: 0, x: -30, duration: 0.4, ease: "power3.out" }, at);
+        tl.from(`#right .spec:nth-child(${i + 1})`, { opacity: 0, x: 30, duration: 0.4, ease: "power3.out" }, at + 0.08);
+      });
+
+      // The decision.
+      const decide = 1.85 + labels.length * 0.42 + 0.45;
+      if (v.winner === "left" || v.winner === "right") {
+        const win = "#" + v.winner;
+        const lose = v.winner === "left" ? "#right" : "#left";
+        tl.to(`${lose}`, { opacity: 0.32, scale: 0.94, duration: 0.5, ease: "power2.out" }, decide);
+        tl.to(`${win}`, { scale: 1.04, duration: 0.5, ease: "back.out(2)" }, decide);
+        tl.to(`${win} .stitch`, { opacity: 1, duration: 0.3, ease: "power2.out" }, decide + 0.1);
+        tl.fromTo(
+          `${win} .stamp`,
+          { opacity: 0, scale: 2.2, rotation: -18 },
+          { opacity: 1, scale: 1, rotation: -6, duration: 0.38, ease: "power4.in" },
+          decide + 0.25,
+        );
+      }
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["swatch-compare"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+/* Shanley forest editorial look: the rules used in the "Editing with Claude" video (November 2026).
+   They override claude-edit's default ivory stylesheet: paste them after it in a run's tools_local/style.css.
+   Fonts needed in the run's assets/fonts: Instrument Serif 400 normal + italic, JetBrains Mono, Inter.
+   The last :root line wins: forest green ground, deeper green blocks, cream type, khaki labels, yellow accent. */
+@font-face { font-family: "Instrument Serif"; font-weight: 400; font-style: normal; src: url("assets/fonts/instrument-serif-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Serif"; font-weight: 400; font-style: italic; src: url("assets/fonts/instrument-serif-latin-400-italic.woff2") format("woff2"); }
+:root {
+  --iv: #2c2e27; --card: #262821; --bd: #4b4d41; --ink: #f0e8e0; --sec: #d0d0c0; --mut: #b8b088;
+  --clay: #b8b088; --clayd: #e8d8b0; --clayt: rgba(184, 176, 136, .16); --dark: #203028; --hair: #55574a;
+  --serif: "Instrument Serif", serif; --bar: #203028; --bartx: #f0f4ec; --sage: #f5cf45;
+}
+#grid { background-image: none; }
+.pc { border-radius: 4px; box-shadow: none; }
+.plate { border-radius: 4px; background: #111; box-shadow: 0 0 0 1px var(--bd); }
+.serif { font-weight: 400; letter-spacing: -0.01em; }
+.serif .it { font-style: normal; color: var(--sage); }
+.mono { letter-spacing: .22em; }
+.vt { border-radius: 4px; background: var(--bar); box-shadow: inset 0 0 0 1px var(--bd); }
+.vt.e { background: none; border: 2px dashed var(--hair); box-shadow: none; }
+.idea { background: none; color: var(--clayd); font-family: var(--serif); font-weight: 400; font-style: italic; font-size: 46px; }
+.tc { border-radius: 3px; }
+.tc.v { background: var(--ink); }
+.tc.c { background: var(--clayt); border: 1.5px solid var(--clay); }
+.tc.a { background: var(--hair); }
+.tcut { background: var(--iv); }
+.tag { border-radius: 3px; background: var(--ink); color: #1c1d19; letter-spacing: .16em; }
+.pillw { background: none; border: none; border-bottom: 1.5px solid var(--hair); border-radius: 0 !important; color: var(--ink); font-family: var(--serif); font-weight: 400; justify-content: flex-start; }
+.chip .in { border-radius: 4px; background: var(--bar); color: var(--bartx); font-family: var(--serif); font-weight: 400; font-size: 74px; letter-spacing: -0.005em; text-transform: none; padding: 0 30px; line-height: 90px; }
+.chip .in b { font-weight: 400; color: var(--sage); }
+
+.iss { position: absolute; left: 0; width: 1080px; text-align: center; white-space: nowrap; line-height: 1; font-family: var(--mono); font-weight: 500; font-size: 24px; letter-spacing: .3em; color: var(--sec); }
+.big { position: absolute; left: 0; width: 1080px; text-align: center; white-space: nowrap; line-height: 1; font-family: var(--serif); font-weight: 400; letter-spacing: -0.015em; color: var(--ink); }
+.sg { color: var(--sage); }
+.st { position: absolute; white-space: nowrap; line-height: 1; font-family: var(--serif); font-weight: 400; letter-spacing: -0.01em; color: var(--ink); }
+.stw { position: relative; display: inline-block; }
+.stw.dr { color: var(--mut); }
+.sk { position: absolute; left: -6px; right: -6px; top: 54%; height: 4px; background: var(--ink); transform-origin: 0 50%; opacity: 0; }
+.bar { position: absolute; height: 30px; background: var(--ink); }
+.dayt { position: absolute; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 60px; line-height: 1; color: var(--ink); }
+.sockn { position: absolute; width: 180px; height: 180px; border: 2px solid var(--mut); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 500; font-size: 44px; letter-spacing: .1em; color: var(--ink); }
+.disc { position: absolute; width: 400px; height: 400px; border-radius: 50%; border: 2px solid var(--mut); display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 110px; line-height: 1; color: var(--ink); }
+.file { position: absolute; width: 280px; height: 360px; background: var(--ink); }
+.fx { position: absolute; left: 0; bottom: 30px; width: 280px; text-align: center; font-family: var(--serif); font-size: 88px; line-height: 1; color: #1c1d19; }
+.file .tag { background: var(--bar); color: var(--bartx); }
+#hk-pl { border-radius: 0; box-shadow: none; }
+:root { --iv: #203028; --card: #1a2821; --bd: #3c5246; --hair: #3f564a; --dark: #14201a; --bar: #14201a; }
+.chip .in { box-shadow: 0 0 0 1px rgba(240, 232, 224, .14); }
+.tag { color: #14201a; }
+.fx { color: #14201a; }

@@ -1,0 +1,748 @@
+<title>Edit Video with Claude</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: one forest-green column of "title cards", like the video. Mono label, two-tone serif title, hairlines, flat blocks. Single look by choice. */
+  :root {
+    color-scheme: dark;
+    --ground: #203028;
+    --block: #1a2821;
+    --deep: #14201a;
+    --line: #3c5246;
+    --cream: #f0e8e0;
+    --sec: #d0d0c0;
+    --khaki: #b8b088;
+    --yellow: #f5cf45;
+    --serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--ground);
+    color: var(--cream);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    padding-left: max(20px, env(safe-area-inset-left, 0px));
+    padding-right: max(20px, env(safe-area-inset-right, 0px));
+    padding-block: 0 80px;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; display: flex; flex-direction: column; gap: 88px; }
+  a { color: var(--yellow); text-underline-offset: 3px; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--yellow); outline-offset: 3px; }
+  p { margin: 0; color: var(--sec); }
+  strong { color: var(--cream); font-weight: 600; }
+  code { font-family: var(--mono); font-size: 0.86em; color: var(--cream); background: var(--deep); padding: 2px 6px; border-radius: 3px; overflow-wrap: anywhere; }
+
+  .label { font-family: var(--mono); font-weight: 500; font-size: 11px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--khaki); }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 400; letter-spacing: -0.01em; margin: 0; text-wrap: balance; color: var(--cream); }
+  h1 { font-size: clamp(54px, 11vw, 104px); line-height: 0.92; }
+  h2 { font-size: clamp(40px, 7vw, 60px); line-height: 1; }
+  h3 { font-size: 28px; line-height: 1.1; }
+  h1 b, h2 b, h3 b { font-weight: 400; color: var(--yellow); }
+  h1 i { display: block; font-size: 0.46em; color: var(--yellow); line-height: 1; margin-bottom: 4px; }
+
+  section { display: flex; flex-direction: column; gap: 28px; }
+  .head { display: flex; flex-direction: column; gap: 14px; padding-top: 22px; border-top: 1px solid var(--line); }
+
+  /* hero */
+  .hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 40px; align-items: center; padding-top: 56px; }
+  .hero-copy { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+  .hero-copy p { font-size: 18px; }
+  .phones { display: flex; gap: 14px; justify-content: flex-end; }
+  .phone { flex: 1 1 0; max-width: 190px; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+  .phone img { display: block; width: 100%; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 4px; box-shadow: 0 0 0 1px var(--line); }
+  .phone:nth-child(2) { margin-top: 44px; }
+  .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .fact { padding: 20px 16px 22px 0; display: flex; flex-direction: column; gap: 6px; }
+  .fact + .fact { padding-left: 20px; border-left: 1px solid var(--line); }
+  .fact .n { font-family: var(--serif); font-size: clamp(34px, 6vw, 52px); line-height: 1; }
+  .fact .n b { font-weight: 400; color: var(--yellow); }
+  .fact span { font-size: 14px; color: var(--sec); }
+
+  /* four steps */
+  .steps4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); }
+  .s4 { padding: 22px 18px 6px 0; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .s4 + .s4 { padding-left: 18px; border-left: 1px solid var(--line); }
+  .s4 svg { width: 64px; height: 64px; color: var(--cream); }
+  .s4 h3 { font-size: 25px; }
+  .s4 p { font-size: 14px; line-height: 1.5; }
+
+  /* clock */
+  .clock { background: var(--block); border-radius: 4px; padding: 26px 24px 24px; display: flex; flex-direction: column; gap: 22px; }
+  .track { position: relative; height: 12px; background: var(--deep); border-radius: 2px; display: flex; gap: 3px; }
+  .track i { display: block; height: 100%; background: var(--cream); border-radius: 2px; }
+  .track i.y { background: var(--yellow); }
+  .ticks { display: grid; grid-template-columns: 26fr 19fr 55fr; gap: 3px; }
+  .tick { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-right: 8px; }
+  .tick .t { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; color: var(--khaki); }
+  .tick .d { font-size: 14px; color: var(--sec); line-height: 1.4; }
+  .clock-foot { display: flex; flex-wrap: wrap; gap: 10px 28px; font-size: 14px; color: var(--sec); }
+  .clock-foot b { font-family: var(--serif); font-weight: 400; font-size: 24px; color: var(--cream); margin-right: 6px; }
+
+  /* packs */
+  .packs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .pack { background: var(--block); border-radius: 4px; padding: 24px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .pack ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 15px; color: var(--sec); }
+  .pack li { padding-left: 22px; position: relative; }
+  .pack li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 10px; height: 2px; background: var(--yellow); }
+  .cmds { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 6px; }
+  .cmds code { background: var(--deep); padding: 5px 9px; }
+
+  /* need list */
+  .rows { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+  .row { display: grid; grid-template-columns: 34px minmax(0, 220px) minmax(0, 1fr); gap: 14px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .row .no { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; color: var(--khaki); }
+  .row .k { font-family: var(--serif); font-size: 23px; line-height: 1.15; color: var(--cream); }
+  .row .v { font-size: 15px; color: var(--sec); min-width: 0; }
+
+  /* tabs */
+  .tabs { display: inline-flex; align-self: flex-start; border: 1px solid var(--line); border-radius: 4px; padding: 4px; gap: 4px; }
+  .tabs button { font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; padding: 11px 20px; border: 0; border-radius: 3px; background: transparent; color: var(--sec); cursor: pointer; }
+  .tabs button[aria-selected="true"] { background: var(--yellow); color: var(--deep); }
+  .panel { display: flex; flex-direction: column; gap: 22px; }
+  .note { border-left: 2px solid var(--yellow); padding: 4px 0 4px 16px; font-size: 15px; color: var(--sec); }
+
+  .step { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 8px 20px; padding: 26px 0 4px; border-top: 1px solid var(--line); }
+  .step .num { font-family: var(--serif); font-size: 54px; line-height: 0.9; color: var(--yellow); }
+  .step .body { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .step .time { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--khaki); }
+  .step p { font-size: 15px; }
+
+  .code { position: relative; background: var(--deep); border-radius: 4px; box-shadow: 0 0 0 1px var(--line); }
+  .code .bar { display: flex; justify-content: space-between; align-items: center; padding: 8px 8px 8px 16px; border-bottom: 1px solid var(--line); }
+  .code .bar span { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--khaki); }
+  .code button { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; background: transparent; color: var(--cream); border: 1px solid var(--line); border-radius: 3px; padding: 6px 12px; cursor: pointer; }
+  .code button:hover { border-color: var(--yellow); color: var(--yellow); }
+  .code pre { margin: 0; padding: 16px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.75; color: var(--cream); }
+
+  .wrapit { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .hand { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .hand summary { cursor: pointer; padding: 20px 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cream); }
+  .hand summary:hover { color: var(--yellow); }
+  .hand-in { display: flex; flex-direction: column; gap: 22px; padding: 6px 0 28px; }
+
+  .ask { background: var(--deep); border-radius: 4px; box-shadow: 0 0 0 1px var(--yellow); padding: 26px 24px; display: flex; flex-direction: column; gap: 12px; }
+  .ask .label { color: var(--yellow); }
+  .ask h3 { font-size: 34px; }
+  .ask p { font-size: 17px; color: var(--cream); }
+
+  /* doctor */
+  .doctor { background: var(--block); border-radius: 4px; padding: 26px 24px; display: flex; flex-direction: column; gap: 18px; }
+  .dbar { display: flex; gap: 3px; height: 34px; }
+  .dbar i { display: block; border-radius: 2px; }
+  .dbar .p { flex: 24; background: var(--cream); }
+  .dbar .w { flex: 8; background: var(--khaki); }
+  .dbar .f { flex: 0 0 34px; background: transparent; box-shadow: inset 0 0 0 2px var(--yellow); }
+  .dkey { display: flex; flex-wrap: wrap; gap: 12px 34px; }
+  .dkey div { display: flex; align-items: baseline; gap: 10px; }
+  .dkey b { font-family: var(--serif); font-weight: 400; font-size: 44px; line-height: 1; }
+  .dkey .zero b { color: var(--yellow); }
+  .dkey span { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; color: var(--khaki); }
+
+  /* folder tree */
+  .tree { background: var(--deep); border-radius: 4px; box-shadow: 0 0 0 1px var(--line); padding: 20px; font-family: var(--mono); font-size: 13px; line-height: 2; overflow-x: auto; white-space: nowrap; color: var(--sec); }
+  .tree .hit { color: var(--deep); background: var(--yellow); padding: 3px 8px; border-radius: 3px; }
+  .tree .why { color: var(--khaki); letter-spacing: 0.08em; }
+  .tree .dim { opacity: 0.55; }
+
+  /* first edit list */
+  .flow { display: flex; flex-direction: column; }
+  .f { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 16px; padding: 0 0 26px; position: relative; }
+  .f::before { content: ""; position: absolute; left: 16px; top: 34px; bottom: 0; width: 1px; background: var(--line); }
+  .f:last-child::before { display: none; }
+  .f .dot { width: 34px; height: 34px; border: 1px solid var(--khaki); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; color: var(--cream); background: var(--ground); position: relative; }
+  .f.you .dot { background: var(--yellow); border-color: var(--yellow); color: var(--deep); }
+  .f .who { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--khaki); }
+  .f h3 { font-size: 25px; margin: 2px 0 6px; }
+  .f p { font-size: 15px; }
+  .f .code { margin-top: 12px; }
+
+  /* review player walkthrough */
+  .player { display: flex; flex-direction: column; gap: 18px; }
+  .shots { position: relative; aspect-ratio: 1705 / 889; max-width: 100%; border-radius: 4px; overflow: hidden; box-shadow: 0 0 0 1px var(--line); background: #eaf1fa; container-type: inline-size; }
+  .shots img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 0.35s ease; }
+  .player[data-step="1"] .sa, .player[data-step="2"] .sa, .player[data-step="3"] .sc, .player[data-step="4"] .sc, .player[data-step="5"] .sa { opacity: 1; }
+  .ring { position: absolute; border: 0.35cqw solid var(--yellow); border-radius: 0.5cqw; box-shadow: 0 0 0 100cqw rgba(20, 32, 26, 0.38); transition: left 0.5s ease, top 0.5s ease, width 0.5s ease, height 0.5s ease; left: 1.9%; top: 5.8%; width: 23.2%; height: 77.2%; }
+  .player[data-step="2"] .ring { left: 21.7%; top: 83.2%; width: 4.3%; height: 5.6%; }
+  .player[data-step="3"] .ring { left: 14.8%; top: 83.3%; width: 76%; height: 5.4%; }
+  .player[data-step="4"] .ring { left: 90.6%; top: 84.2%; width: 5%; height: 3.8%; }
+  .player[data-step="5"] .ring { left: 95.9%; top: 15%; width: 3.6%; height: 68.6%; }
+  .pop { position: absolute; left: 50%; top: 66%; transform: translate(-50%, -50%) scale(0.6); opacity: 0; transition: opacity 0.25s ease, transform 0.25s ease; background: var(--deep); color: var(--cream); font-family: var(--mono); font-size: 3.4cqw; padding: 1.2cqw 2.4cqw; border-radius: 0.8cqw; border: 0.25cqw solid var(--yellow); border-bottom-width: 0.8cqw; white-space: nowrap; }
+  .player[data-step="2"] .pn, .player[data-step="4"] .pe { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  .psteps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+  .psteps button { text-align: left; background: var(--block); border: 1px solid transparent; border-radius: 4px; padding: 14px 14px 16px; color: var(--sec); cursor: pointer; display: flex; flex-direction: column; gap: 6px; font-family: var(--sans); font-size: 14px; line-height: 1.45; min-width: 0; }
+  .psteps button b { font-family: var(--serif); font-weight: 400; font-size: 20px; line-height: 1.1; color: var(--cream); }
+  .psteps button .label { color: var(--khaki); }
+  .psteps button[aria-current="true"] { border-color: var(--yellow); background: var(--deep); }
+  .psteps button[aria-current="true"] .label { color: var(--yellow); }
+  @media (max-width: 760px) { .psteps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (prefers-reduced-motion: reduce) { .shots img, .ring, .pop { transition: none; } }
+
+  /* note mock */
+  .mock { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 22px; align-items: center; background: var(--block); border-radius: 4px; padding: 22px; }
+  .mock img { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 4px; display: block; box-shadow: 0 0 0 1px var(--line); }
+  .mock .side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .key { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 30px; padding: 0 8px; border: 1px solid var(--khaki); border-bottom-width: 3px; border-radius: 4px; font-family: var(--mono); font-size: 13px; color: var(--cream); }
+  .bubble { font-family: var(--serif); font-size: 22px; line-height: 1.25; color: var(--cream); background: var(--deep); padding: 12px 16px; border-radius: 4px; box-shadow: 0 0 0 1px var(--line); }
+  .bubble + .bubble { margin-top: -4px; }
+
+  /* look */
+  .swatches { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .sw { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .sw i { display: block; height: 76px; border-radius: 4px; box-shadow: 0 0 0 1px var(--line); }
+  .sw span { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--khaki); text-transform: uppercase; }
+  .spec { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .spec > div { background: var(--block); border-radius: 4px; padding: 20px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .spec .big { font-family: var(--serif); font-size: 40px; line-height: 1; }
+  .spec .big b { font-weight: 400; color: var(--yellow); }
+  .spec .cap { align-self: flex-start; font-family: var(--serif); font-size: 26px; line-height: 1; background: var(--deep); padding: 8px 14px 10px; border-radius: 4px; box-shadow: 0 0 0 1px rgba(240, 232, 224, 0.14); }
+  .spec .cap b { font-weight: 400; color: var(--yellow); }
+  .spec p { font-size: 14px; }
+
+  /* fixes */
+  .fixes { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+  .fix { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .fix .q { font-family: var(--serif); font-size: 22px; line-height: 1.2; color: var(--cream); }
+  .fix .a { font-size: 15px; color: var(--sec); min-width: 0; }
+
+  footer { border-top: 1px solid var(--line); padding-top: 22px; display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
+  footer p { color: var(--khaki); max-width: none; }
+
+  @media (max-width: 760px) {
+    .wrap { gap: 64px; }
+    .hero { grid-template-columns: minmax(0, 1fr); padding-top: 36px; }
+    .phones { justify-content: flex-start; }
+    .steps4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .s4:nth-child(3) { padding-left: 0; border-left: 0; }
+    .s4:nth-child(n+3) { border-top: 1px solid var(--line); }
+    .packs, .spec { grid-template-columns: minmax(0, 1fr); }
+    .row { grid-template-columns: 30px minmax(0, 1fr); }
+    .row .v { grid-column: 2; }
+    .fix { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+    .step { grid-template-columns: 40px minmax(0, 1fr); gap: 8px 12px; }
+    .step .num { font-size: 40px; }
+    .ticks { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    .mock { grid-template-columns: 96px minmax(0, 1fr); gap: 16px; padding: 16px; }
+    .fact { padding-right: 8px; }
+    .fact + .fact { padding-left: 12px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-copy">
+      <div class="label">Shanley AI · Setup guide · Mac and PC</div>
+      <h1><i>Editing with</i>Claude</h1>
+      <p>Film one messy take. Hand Claude the file. Get back a finished vertical video with captions, graphics and sound, then fix anything by typing a note.</p>
+      <p>This page sets up your computer to do that. You do not need to know how to code.</p>
+      <p class="note"><strong>Reading on your phone?</strong> Read it here, then open this page on your Mac or PC to do the steps. Claude Code runs on a computer.</p>
+    </div>
+    <div class="phones" aria-hidden="true">
+      <div class="phone"><img src="{{IMG_HOOK}}" alt=""><span class="label">The hook</span></div>
+      <div class="phone"><img src="{{IMG_SPLIT}}" alt=""><span class="label">The edit</span></div>
+    </div>
+  </header>
+
+  <div class="facts">
+    <div class="fact"><div class="n">1 <b>hour</b></div><span>to set up, mostly waiting for downloads</span></div>
+    <div class="fact"><div class="n">6 <b>GB</b></div><span>the installs took on my Mac</span></div>
+    <div class="fact"><div class="n">0 <b>code</b></div><span>you paste one message and Claude installs it</span></div>
+  </div>
+
+  <section>
+    <div class="head">
+      <div class="label">The idea</div>
+      <h2>How it <b>works</b></h2>
+    </div>
+    <div class="steps4">
+      <div class="s4">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="20" y="6" width="24" height="52" rx="4"/><circle cx="32" cy="26" r="6"/><path d="M24 44c2-5 14-5 16 0"/><path d="M29 12h6"/></svg>
+        <div class="label">01</div>
+        <h3>Film a messy take</h3>
+        <p>Vertical, on your phone. Mistakes, mumbles and restarts all stay in.</p>
+      </div>
+      <div class="s4">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 12h16l8 8v32H8z"/><path d="M24 12v8h8"/><path d="M36 36h10"/><path d="M42 31l5 5-5 5"/><circle cx="54" cy="36" r="6" stroke="#f5cf45"/></svg>
+        <div class="label">02</div>
+        <h3>Hand it to Claude</h3>
+        <p>It transcribes the take and cuts every pause and bad take.</p>
+      </div>
+      <div class="s4">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="16" y="6" width="32" height="52" rx="3"/><path d="M16 32h32"/><path d="M22 14h14M22 20h20"/><rect x="24" y="48" width="16" height="5" rx="1" stroke="#f5cf45"/><circle cx="32" cy="40" r="3"/></svg>
+        <div class="label">03</div>
+        <h3>Claude builds the edit</h3>
+        <p>Captions, graphics on top, you on the bottom, and sound.</p>
+      </div>
+      <div class="s4">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="14" width="34" height="36" rx="3"/><path d="M19 26v12l10-6z"/><path d="M46 20h12v16H52l-4 5v-5h-2z" stroke="#f5cf45"/></svg>
+        <div class="label">04</div>
+        <h3>Leave notes</h3>
+        <p>Pause where you want a change and type it. Claude fixes only that part.</p>
+      </div>
+    </div>
+
+    <div class="clock">
+      <div class="label">My first video, by the clock · 21 November 2026</div>
+      <div class="track" role="img" aria-label="Timeline from 7:40 pm to 9:34 pm">
+        <i style="flex:26"></i><i style="flex:19"></i><i class="y" style="flex:55"></i>
+      </div>
+      <div class="ticks">
+        <div class="tick"><span class="t">7:40 PM</span><span class="d">Gave Claude the raw file. It transcribed and cut it.</span></div>
+        <div class="tick"><span class="t">8:10 PM</span><span class="d">I listened to the cut and approved it.</span></div>
+        <div class="tick"><span class="t">8:31 → 9:34 PM</span><span class="d">First sample scenes, my notes, then the finished 4K file.</span></div>
+      </div>
+      <div class="clock-foot">
+        <span><b>3:23</b>raw take</span>
+        <span><b>1:35</b>finished video</span>
+        <span><b>8</b>changes I asked for by note</span>
+        <span><b>0</b>clips dragged on a timeline</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="head">
+      <div class="label">What you install</div>
+      <h2>Two free <b>packs</b></h2>
+      <p>Both are folders you download from GitHub. Claude Code reads them and gains new commands.</p>
+    </div>
+    <div class="packs">
+      <div class="pack">
+        <div class="label">Pack 01 · the editor</div>
+        <h3>claude-edit</h3>
+        <ul>
+          <li>Cuts your pauses and bad takes</li>
+          <li>Builds the edit: captions, graphics, sound</li>
+          <li>Opens a review player where you leave notes</li>
+        </ul>
+        <div class="cmds"><code>/claude-edit</code></div>
+      </div>
+      <div class="pack">
+        <div class="label">Pack 02 · the look</div>
+        <h3>Shanley Animations</h3>
+        <ul>
+          <li>The magazine-cover hook with the title behind your head</li>
+          <li>Ready-made animations for fashion and design</li>
+          <li>My forest-green look, saved as a command</li>
+        </ul>
+        <div class="cmds"><code>/shanley-animate</code><code>/shanley-style</code></div>
+      </div>
+    </div>
+
+    <div class="rows">
+      <div class="row"><span class="no">01</span><span class="k">Claude Code</span><span class="v">A paid Claude plan (Pro or higher), which includes Claude Code. Download the desktop app at <a href="https://claude.com/download">claude.com/download</a> and sign in. VS Code works too.</span></div>
+      <div class="row"><span class="no">02</span><span class="k">Chrome or Edge</span><span class="v">The review player opens in your browser.</span></div>
+      <div class="row"><span class="no">03</span><span class="k">25 GB of free space</span><span class="v">The installs took about 6 GB on my Mac. Raw footage and finished videos use the rest.</span></div>
+      <div class="row"><span class="no">04</span><span class="k">No GitHub account</span><span class="v">The packs are public. You download them without signing in.</span></div>
+    </div>
+  </section>
+
+  <div class="ask">
+    <div class="label">Lost at any step?</div>
+    <h3>Open a Claude chat and <b>ask</b></h3>
+    <p>Ask whatever is not clear, in your own words. Take a screenshot of what you see and paste it in if that is easier. Claude will tell you what to do next.</p>
+  </div>
+
+  <section>
+    <div class="head">
+      <div class="label">Setup · Option 1 · Claude desktop app</div>
+      <h2>Let Claude <b>install it</b></h2>
+      <p>You do not type commands. You paste one message into Claude Code and it does the installing, on a Mac or a PC.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">1</div>
+      <div class="body">
+        <h3>Open Claude Code</h3>
+        <p>Open the <strong>Claude desktop app</strong> and switch to <strong>Code</strong>. If it asks which folder to work in, pick your home folder.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <div class="body">
+        <h3>Paste this message</h3>
+        <div class="code"><div class="bar"><span>Message to Claude</span><button type="button" data-copy>Copy</button></div><pre class="wrapit">Set up video editing on this computer for me. I am not a coder, so do every step yourself and tell me in plain words what is happening.
+
+1. Install Python 3.12, Node.js, Git and FFmpeg. On a Mac use Homebrew and install ffmpeg-full, not plain ffmpeg. On Windows use winget.
+2. Download https://github.com/shasuganda/claude-edit into my home folder and install it by following its INSTALL.md, including the transcription model and the sounds.
+3. Download https://github.com/shasuganda/shanley-animations into my home folder, then run "npm install" and "npm run setup" in it.
+4. Run claude-edit's doctor (python tools/doctor.py) and fix every FAIL line.
+
+Some steps take a long time. Keep going until the doctor shows 0 FAIL, then tell me it is ready.</pre></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <div class="body">
+        <div class="time">About an hour · you can walk away</div>
+        <h3>Say yes, then wait</h3>
+        <p>Claude asks permission before it runs things. Approve each one. The FFmpeg step can sit for 20 minutes or more looking frozen. Let it finish.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">4</div>
+      <div class="body">
+        <h3>Ready at <b>0 FAIL</b></h3>
+        <p>Claude tells you when the checker passes. Close that chat; your new commands show up in the next one.</p>
+      </div>
+    </div>
+    <p class="note">These are the same installs I did with Claude, one step at a time. I have not run this single message from start to finish myself, so if Claude gets stuck, tell it to keep going or paste the error back to it.</p>
+
+    <div class="head" style="margin-top:36px">
+      <div class="label">Setup · Option 2 · Terminal</div>
+      <h2>Or copy and paste into <b>Terminal</b></h2>
+      <p>Open the Terminal app on a Mac, or PowerShell on a PC. Copy each block below, paste it, and press Enter. Pick your computer.</p>
+    </div>
+    <div class="hand-in">
+    <div class="tabs" role="tablist" aria-label="Computer">
+      <button id="tab-mac" role="tab" aria-selected="true" aria-controls="panel-mac">Mac</button>
+      <button id="tab-pc" role="tab" aria-selected="false" aria-controls="panel-pc">Windows PC</button>
+    </div>
+
+    <div class="panel" id="panel-mac" role="tabpanel" aria-labelledby="tab-mac">
+      <p>Open the <strong>Terminal</strong> app. Copy each block, paste it, press Enter, and wait for it to finish before the next one. These are the commands that worked on my Apple Silicon Mac.</p>
+
+      <div class="step">
+        <div class="num">1</div>
+        <div class="body">
+          <div class="time">About 2 minutes</div>
+          <h3>Install Homebrew</h3>
+          <p>Homebrew is a free tool that installs other tools. If typing <code>brew --version</code> prints a number, run only the last line.</p>
+          <div class="code"><div class="bar"><span>Terminal</span><button type="button" data-copy>Copy</button></div><pre>mkdir ~/homebrew
+curl -L https://github.com/Homebrew/brew/tarball/main | tar xz --strip-components 1 -C ~/homebrew
+echo 'export PATH="$HOME/homebrew/bin:$PATH"' &gt;&gt; ~/.zshrc
+source ~/.zshrc
+brew update</pre></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">2</div>
+        <div class="body">
+          <div class="time">30 to 40 minutes · the long one</div>
+          <h3>Install the system tools</h3>
+          <p>Use <code>ffmpeg-full</code>, not plain <code>ffmpeg</code>. The plain one is missing the caption tool. This step builds some parts from scratch and looks frozen while it does. ffmpeg alone took 18 minutes on my Mac. Let it finish.</p>
+          <div class="code"><div class="bar"><span>Terminal</span><button type="button" data-copy>Copy</button></div><pre>brew install python@3.12 node git ffmpeg-full
+brew link --force ffmpeg-full</pre></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">3</div>
+        <div class="body">
+          <div class="time">About 5 minutes</div>
+          <h3>Download claude-edit</h3>
+          <div class="code"><div class="bar"><span>Terminal</span><button type="button" data-copy>Copy</button></div><pre>cd ~
+git clone https://github.com/shasuganda/claude-edit.git
+cd claude-edit
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+npm ci
+python -m playwright install chromium</pre></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">4</div>
+        <div class="body">
+          <div class="time">About 5 minutes · 2 GB download</div>
+          <h3>Download the transcription model</h3>
+          <p>Stay in the same Terminal window. The model turns your speech into text on your own computer. Your video is not uploaded anywhere.</p>
+          <div class="code"><div class="bar"><span>Terminal</span><button type="button" data-copy>Copy</button></div><pre>python -c "from faster_whisper import WhisperModel; WhisperModel('large-v3-turbo', device='cpu', compute_type='int8')"
+python tools/fetch_sounds.py</pre></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">5</div>
+        <div class="body">
+          <div class="time">About 3 minutes</div>
+          <h3>Download Shanley Animations</h3>
+          <p>This adds <code>/shanley-animate</code> and <code>/shanley-style</code> to Claude Code. Keep the folder where it is; the commands point to it.</p>
+          <div class="code"><div class="bar"><span>Terminal</span><button type="button" data-copy>Copy</button></div><pre>cd ~
+git clone https://github.com/shasuganda/shanley-animations.git
+cd shanley-animations
+npm install
+npm run setup</pre></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-pc" role="tabpanel" aria-labelledby="tab-pc" hidden>
+      <p>Open <strong>PowerShell</strong>. Copy each block, paste it, press Enter, and wait for it to finish before the next one.</p>
+      <p class="note"><strong>Not tested by me.</strong> I work on a Mac. The claude-edit steps come from that pack's own Windows install guide. Shanley Animations has only been run on a Mac so far. If a step fails, paste the error into Claude Code and ask it to fix it.</p>
+
+      <div class="step">
+        <div class="num">1</div>
+        <div class="body">
+          <div class="time">About 10 minutes</div>
+          <h3>Install the system tools</h3>
+          <p>Close and reopen PowerShell afterwards so it can find the new tools. Edge is already on your PC and is enough for the review player.</p>
+          <div class="code"><div class="bar"><span>PowerShell</span><button type="button" data-copy>Copy</button></div><pre>winget install --exact --id Python.Python.3.12
+winget install --exact --id OpenJS.NodeJS.LTS
+winget install --exact --id Git.Git
+winget install --exact --id Gyan.FFmpeg</pre></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">2</div>
+        <div class="body">
+          <div class="time">About 5 minutes</div>
+          <h3>Download claude-edit</h3>
+          <p>Run the <code>$env:Path</code> line again each time you open a new PowerShell window in this folder.</p>
+          <div class="code"><div class="bar"><span>PowerShell</span><button type="button" data-copy>Copy</button></div><pre>git clone https://github.com/shasuganda/claude-edit.git
+cd claude-edit
+py -3.12 -m venv .venv
+$env:Path = (Join-Path (Get-Location) '.venv/Scripts') + ';' + $env:Path
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+npm ci
+python -m playwright install chromium</pre></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">3</div>
+        <div class="body">
+          <div class="time">About 5 minutes · 2 GB download</div>
+          <h3>Download the transcription model</h3>
+          <p>The model turns your speech into text on your own computer. Your video is not uploaded anywhere.</p>
+          <div class="code"><div class="bar"><span>PowerShell</span><button type="button" data-copy>Copy</button></div><pre>python -c "from faster_whisper import WhisperModel; WhisperModel('large-v3-turbo', device='cpu', compute_type='int8')"
+python tools/fetch_sounds.py</pre></div>
+          <p>Only if your PC has an NVIDIA graphics card, add this to make transcription much faster:</p>
+          <div class="code"><div class="bar"><span>PowerShell · optional</span><button type="button" data-copy>Copy</button></div><pre>python -m pip install nvidia-cublas-cu12 "nvidia-cudnn-cu12&gt;=9,&lt;10"</pre></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">4</div>
+        <div class="body">
+          <div class="time">About 3 minutes</div>
+          <h3>Download Shanley Animations</h3>
+          <p>This adds <code>/shanley-animate</code> and <code>/shanley-style</code> to Claude Code. Keep the folder where it is; the commands point to it.</p>
+          <div class="code"><div class="bar"><span>PowerShell</span><button type="button" data-copy>Copy</button></div><pre>cd ..
+git clone https://github.com/shasuganda/shanley-animations.git
+cd shanley-animations
+npm install
+npm run setup</pre></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="head">
+      <div class="label">Before your first edit</div>
+      <h2>Check it <b>works</b></h2>
+      <p>claude-edit comes with a checker called the doctor. Claude runs it at the end of the setup. To run it again, ask Claude to "run the claude-edit doctor", or use the command below inside the <code>claude-edit</code> folder. Every line comes back PASS, WARN or FAIL.</p>
+    </div>
+    <div class="code"><div class="bar"><span>Terminal or PowerShell</span><button type="button" data-copy>Copy</button></div><pre>python tools/doctor.py</pre></div>
+    <div class="doctor">
+      <div class="label">What my Mac said</div>
+      <div class="dbar" role="img" aria-label="24 pass, 8 warn, 0 fail"><i class="p"></i><i class="w"></i><i class="f"></i></div>
+      <div class="dkey">
+        <div><b>24</b><span>PASS</span></div>
+        <div><b>8</b><span>WARN · FINE TO IGNORE</span></div>
+        <div class="zero"><b>0</b><span>FAIL · THIS IS THE ONE THAT MATTERS</span></div>
+      </div>
+    </div>
+    <p class="note"><strong>WARN lines are optional extras.</strong> Ignore them. If you see a FAIL line, tell Claude: "the doctor shows a FAIL, fix it".</p>
+  </section>
+
+  <section>
+    <div class="head">
+      <div class="label">The part most people miss</div>
+      <h2>Open the right <b>folder</b></h2>
+      <p>The <code>/claude-edit</code> command only exists when Claude Code is opened inside the <code>claude-edit</code> folder itself. In the Claude desktop app, choose <code>claude-edit</code> as the folder to work in, then start a new chat. In VS Code it is File, Open Folder.</p>
+    </div>
+    <div class="tree" role="img" aria-label="Folder tree: open the claude-edit folder; put your video and inspiration screenshots in Video-Editing, raw">
+<div>your home folder</div>
+<div>├─ <span class="hit">claude-edit</span> <span class="why">&nbsp;← OPEN THIS FOLDER IN CLAUDE CODE</span></div>
+<div>│&nbsp;&nbsp;&nbsp;├─ Video-Editing</div>
+<div>│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└─ raw <span class="why">&nbsp;← DROP YOUR VIDEO AND INSPIRATION SCREENSHOTS HERE</span></div>
+<div>│&nbsp;&nbsp;&nbsp;└─ out <span class="why">&nbsp;← YOUR FINISHED VIDEO APPEARS HERE</span></div>
+<div class="dim">└─ shanley-animations &nbsp;(leave it where it is)</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="head">
+      <div class="label">Step by step</div>
+      <h2>Your first <b>edit</b></h2>
+      <p>Yellow dots are your turns. The rest is Claude working while you do something else.</p>
+    </div>
+    <div class="flow">
+      <div class="f you"><div class="dot">1</div><div><div class="who">You</div><h3>Film your take</h3><p>Vertical, with some room above your head. Keep rolling through mistakes and restarts. To try several openings, say "hook number one", deliver it, then "hook number two".</p></div></div>
+      <div class="f you"><div class="dot">2</div><div><div class="who">You</div><h3>Drop the file in the raw folder</h3><p>Create a <code>Video-Editing/raw</code> folder inside <code>claude-edit</code> and put the video there. Any MP4 or MOV works.</p></div></div>
+      <div class="f you"><div class="dot">3</div><div><div class="who">You · optional</div><h3>Add your inspiration</h3><p>Screenshot videos whose layout, fonts, colours or style you like, and drop the screenshots into the same <code>raw</code> folder. Claude looks at them and asks what you like about each. I used one screenshot and said "I like the font, font colours and placements".</p></div></div>
+      <div class="f you"><div class="dot">4</div><div><div class="who">You</div><h3>Start the edit</h3><p>In a new Claude Code chat, type the command with the path to your video. If the take is only your face, with no screen recording, say so in the same message.</p>
+        <div class="code"><div class="bar"><span>Claude Code chat</span><button type="button" data-copy>Copy</button></div><pre>/claude-edit "Video-Editing/raw/my-take.mp4" This is a face-only take filmed on my phone, vertical. The screenshots in the same folder are my inspiration for the graphics.</pre></div></div></div>
+      <div class="f"><div class="dot">5</div><div><div class="who">Claude · about 30 minutes for me</div><h3>Transcribes and cuts</h3><p>It removes the pauses and bad takes, then stops and plays you the cut.</p></div></div>
+      <div class="f you"><div class="dot">6</div><div><div class="who">You</div><h3>Listen to the cut</h3><p>Approve it, or say what was clipped. I told it one word got cut off and it fixed that join.</p></div></div>
+      <div class="f"><div class="dot">7</div><div><div class="who">Claude</div><h3>Builds a sample, then the whole video</h3><p>You see a few sample scenes first. This is the moment to ask for a look. Mine: forest green, cream serif type, a yellow accent word.</p></div></div>
+      <div class="f you"><div class="dot">8</div><div><div class="who">You</div><h3>Leave your notes</h3><p>Open <code>http://localhost:4750</code> in Chrome or Edge. Pause where you want a change, press <span class="key">N</span>, type the note, then type "go" in the chat.</p></div></div>
+      <div class="f"><div class="dot">9</div><div><div class="who">Claude</div><h3>Adds sound and exports</h3><p>When the picture is right, say you are happy. It adds sound, takes sound notes the same way, and saves the final MP4 in the <code>out</code> folder.</p></div></div>
+      <div class="f you"><div class="dot">10</div><div><div class="who">You</div><h3>Send it to your phone</h3><p>The <code>out</code> folder holds the full-quality video and a smaller phone copy. AirDrop or message the phone copy to yourself, watch it once on your phone, then post it. If there is no phone copy, ask Claude to make one.</p></div></div>
+    </div>
+
+    <div class="player" id="player" data-step="1">
+      <div class="label">The review screen · how to ask for a change</div>
+      <div class="shots" role="img" aria-label="The review player: the video on the left, the spoken lines in the middle, your notes and past rounds on the right, and a note box along the bottom">
+        <img class="sa" src="{{IMG_PA}}" alt="">
+        <img class="sc" src="{{IMG_PC}}" alt="">
+        <div class="ring"></div>
+        <div class="pop pn">N</div>
+        <div class="pop pe">Enter</div>
+      </div>
+      <div class="psteps">
+        <button type="button" data-go="1" aria-current="true"><span class="label">01</span><b>Pause on the moment</b>Press Space, or click the line you want to change.</button>
+        <button type="button" data-go="2"><span class="label">02</span><b>Press N, or click Note</b>There is a Note button under the video and one beside every sound on the right. A note box opens along the bottom.</button>
+        <button type="button" data-go="3"><span class="label">03</span><b>Type the change</b>Plain words, like "Make this whoosh quieter" or "Make the title bigger".</button>
+        <button type="button" data-go="4"><span class="label">04</span><b>Enter, then "go"</b>Enter saves the note. Add as many as you like, then type go in the Claude chat.</button>
+        <button type="button" data-go="5"><span class="label">05</span><b>Notes on sound</b>The Sound tab on the right lists every sound effect. Click the Note button beside the one you want changed.</button>
+      </div>
+    </div>
+
+    <div class="mock">
+      <img src="{{IMG_TRUTH}}" alt="A frame of the video paused in the review player">
+      <div class="side">
+        <div class="label">Real notes I typed · press <span class="key">N</span> to add one</div>
+        <div class="bubble">"I need more excitement on the font colour, like yellow maybe? It's too toned down."</div>
+        <div class="bubble">"I think the text should be at the bottom of the screen, not on top."</div>
+        <div class="bubble">"Add the title Editing with Claude on top of the screen, behind my head."</div>
+      </div>
+    </div>
+    <p class="note">Only if you start Claude Code from the Mac Terminal instead of the app: run <code>source .venv/bin/activate</code> in the <code>claude-edit</code> folder first.</p>
+  </section>
+
+  <section>
+    <div class="head">
+      <div class="label">The last step</div>
+      <h2>Sound and sound <b>effects</b></h2>
+      <p>Sound comes last. You approve the picture first, then Claude adds the sound effects and you adjust them with notes.</p>
+    </div>
+    <div class="rows">
+      <div class="row"><span class="no">01</span><span class="k">Approve the picture</span><span class="v">When the video looks right, click <strong>Approved</strong> at the top right of the review screen, or tell Claude you are happy with it.</span></div>
+      <div class="row"><span class="no">02</span><span class="k">Claude adds the effects</span><span class="v">It places sounds where things happen on screen: a whoosh when the layout changes, a pop when a title appears, a pencil sound on a strike-through. My video got 12.</span></div>
+      <div class="row"><span class="no">03</span><span class="k">Listen</span><span class="v">Click the <strong>Sound</strong> button under the video, or press <span class="key">S</span>, to hear the video with the effects.</span></div>
+      <div class="row"><span class="no">04</span><span class="k">Change what you don't like</span><span class="v">Open the <strong>Sound</strong> tab on the right. Click the <strong>Note</strong> button beside an effect and type what you want: "too loud", "remove this one", "use a softer sound". Press Enter, then type go in the chat.</span></div>
+      <div class="row"><span class="no">05</span><span class="k">Ask for more</span><span class="v">To add an effect where there is none, pause on that moment, press <span class="key">N</span> and ask for it: "add a pop here".</span></div>
+      <div class="row"><span class="no">06</span><span class="k">Final export</span><span class="v">Once the sound is right, Claude builds the final video.</span></div>
+    </div>
+    <p class="note"><strong>No music.</strong> claude-edit adds sound effects only. Add music in Instagram or TikTok when you post; their tracks are licensed for the platform.</p>
+    <p class="note"><strong>Your voice.</strong> Voice clean-up is not automatic. I asked for mine to be "more clear and soothing" and Claude did it. You can ask the same way.</p>
+  </section>
+
+  <section>
+    <div class="head">
+      <div class="label">Optional</div>
+      <h2>Get my <b>look</b></h2>
+      <p>claude-edit starts in its own light look. To get the one in my video, type <code>/shanley-style</code> in the chat when it shows you the sample scenes, or just describe it in your own words.</p>
+    </div>
+    <div class="swatches" aria-hidden="true">
+      <div class="sw"><i style="background:#203028"></i><span>Forest · ground</span></div>
+      <div class="sw"><i style="background:#14201a"></i><span>Deep · caption bar</span></div>
+      <div class="sw"><i style="background:#f0e8e0"></i><span>Cream · type</span></div>
+      <div class="sw"><i style="background:#f5cf45"></i><span>Yellow · one word</span></div>
+    </div>
+    <div class="spec">
+      <div><div class="label">Titles</div><div class="big">The <b>truth</b></div><p>A serif title in cream with one word in yellow.</p></div>
+      <div><div class="label">Labels · No. 01</div><div class="label" style="color:var(--cream)">Step 01 of 04</div><p>Small spaced-out capitals above every graphic, like a magazine issue line.</p></div>
+      <div><div class="label">Captions</div><div class="cap">video for <b>months</b></div><p>A serif bar low on the screen. The last word turns yellow.</p></div>
+    </div>
+    <p>For the opening shot with the title behind your head, ask in a new chat:</p>
+    <div class="code"><div class="bar"><span>Claude Code chat</span><button type="button" data-copy>Copy</button></div><pre>/shanley-animate put the magazine cover effect on the first 5 seconds of my video, big word CLAUDE, small line "Editing with"</pre></div>
+  </section>
+
+  <section>
+    <div class="head">
+      <div class="label">Troubleshooting</div>
+      <h2>If something <b>breaks</b></h2>
+      <p>These are the problems I hit on my Mac, plus one the install guide warns about.</p>
+    </div>
+    <div class="fixes">
+      <div class="fix"><div class="q">The ffmpeg install stops with an error about openssl</div><div class="a">Run <code>brew update</code>, then run the install again.</div></div>
+      <div class="fix"><div class="q">The ffmpeg install looks stuck</div><div class="a">It is building. Mine sat for about 20 minutes with nothing moving. Let it finish.</div></div>
+      <div class="fix"><div class="q">"Your FFmpeg has no drawtext filter"</div><div class="a">You have plain ffmpeg. Run <code>brew unlink ffmpeg</code>, then <code>brew install ffmpeg-full</code> and <code>brew link --force ffmpeg-full</code>.</div></div>
+      <div class="fix"><div class="q">Claude Code does not know /claude-edit</div><div class="a">The wrong folder is open. Open the <code>claude-edit</code> folder itself and start a new chat.</div></div>
+      <div class="fix"><div class="q">/shanley-animate or /shanley-style is missing</div><div class="a">Start a new chat. New commands only appear in chats opened after the setup ran.</div></div>
+      <div class="fix"><div class="q">Claude asks for "the raw OBS .mkv"</div><div class="a">It only needs the path to your video. Any MP4 or MOV works.</div></div>
+      <div class="fix"><div class="q">Anything else</div><div class="a">Open a Claude chat, say what happened and paste a screenshot. For a problem with the edit itself, open Claude Code in the <code>claude-edit</code> folder and type: "the skill isn't working, run the doctor and fix it".</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="head">
+      <div class="label">Who made this</div>
+      <h2>Hi, I'm <b>Shanley</b></h2>
+      <p>I'm a fashion designer and AI consultant. I stopped posting because editing ate my weekends, and this setup is how I started again.</p>
+      <p><strong>Made your first edit?</strong> Tag me when you post it. I want to see it.</p>
+      <p><strong>Want help with more than video?</strong> I help brands put AI to work: <a href="https://shanley.ai/consulting">shanley.ai/consulting</a></p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="label">Shanley AI · November 2026</div>
+    <p>claude-edit is a free, open-source project shared under the MIT licence; the link in this guide is my copy of it. Shanley Animations and the look on this page are my own. Fonts: Instrument Serif, JetBrains Mono and Inter, all under the SIL Open Font Licence.</p>
+  </footer>
+</div>
+
+<script>
+  (function () {
+    var tabs = { mac: document.getElementById("tab-mac"), pc: document.getElementById("tab-pc") };
+    var panels = { mac: document.getElementById("panel-mac"), pc: document.getElementById("panel-pc") };
+    function show(which) {
+      Object.keys(tabs).forEach(function (k) {
+        tabs[k].setAttribute("aria-selected", k === which ? "true" : "false");
+        panels[k].hidden = k !== which;
+      });
+      try { localStorage.setItem("guide-os", which); } catch (e) {}
+    }
+    tabs.mac.addEventListener("click", function () { show("mac"); });
+    tabs.pc.addEventListener("click", function () { show("pc"); });
+    var saved = null;
+    try { saved = localStorage.getItem("guide-os"); } catch (e) {}
+    if (saved === "pc" || (!saved && /Win/i.test(navigator.platform || ""))) show("pc");
+
+    var player = document.getElementById("player");
+    if (player) {
+      var step = 1, timer = null;
+      var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      function setStep(n) {
+        step = n;
+        player.setAttribute("data-step", String(n));
+        player.querySelectorAll("[data-go]").forEach(function (b) {
+          b.setAttribute("aria-current", b.getAttribute("data-go") === String(n) ? "true" : "false");
+        });
+      }
+      function play() { if (!still) timer = setInterval(function () { setStep(step % 5 + 1); }, 2800); }
+      player.querySelectorAll("[data-go]").forEach(function (b) {
+        b.addEventListener("click", function () { clearInterval(timer); setStep(Number(b.getAttribute("data-go"))); play(); });
+      });
+      play();
+    }
+
+    document.querySelectorAll("[data-copy]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var pre = btn.closest(".code").querySelector("pre");
+        function done(ok) {
+          btn.textContent = ok ? "Copied" : "Select and copy";
+          setTimeout(function () { btn.textContent = "Copy"; }, 1800);
+        }
+        function select() {
+          var r = document.createRange(); r.selectNodeContents(pre);
+          var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+          done(false);
+        }
+        try { navigator.clipboard.writeText(pre.textContent).then(function () { done(true); }, select); } catch (e) { select(); }
+      });
+    });
+  })();
+</script>

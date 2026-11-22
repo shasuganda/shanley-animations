@@ -1,0 +1,250 @@
+<!doctype html>
+<html
+  lang="en"
+  data-resolution="portrait"
+  data-composition-variables='[
+    {"id":"eyebrow","type":"string","label":"Small line above the title","default":"Tech pack"},
+    {"id":"title","type":"string","label":"Title (wrap a word in *stars* for italic mauve)","default":"Every measurement, *called out*"},
+    {"id":"styleNo","type":"string","label":"Style number on the sheet","default":"STYLE SA-0142"},
+    {"id":"callouts","type":"string","label":"Up to 4 callouts as Name|Value, separated by ; (order: chest, body length, sleeve, hem)","default":"Chest width|22 in;Body length|28 in;Sleeve length|8.5 in;Hem sweep|21 in"},
+    {"id":"signature","type":"string","label":"Corner signature (empty to hide)","default":"Shanley AI"}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="stylesheet" href="../assets/brand.css" />
+    <script src="../assets/gsap.min.js"></script>
+    <style>
+      .head {
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        top: 250px;
+      }
+      .head .headline {
+        margin-top: 22px;
+        font-size: 108px;
+      }
+      /* The spec sheet the flat sketch sits on. */
+      .sheet {
+        position: absolute;
+        left: 60px;
+        right: 60px;
+        top: 660px;
+        height: 1040px;
+        background: var(--paper);
+        border: 2px solid var(--line);
+        border-radius: 18px;
+        box-shadow: 0 30px 70px rgba(26, 26, 26, 0.12);
+        background-image:
+          linear-gradient(var(--cream-dark) 1.5px, transparent 1.5px),
+          linear-gradient(90deg, var(--cream-dark) 1.5px, transparent 1.5px);
+        background-size: 48px 48px;
+        background-position: 24px 24px;
+        overflow: hidden;
+      }
+      .sheet-bar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 76px;
+        padding: 0 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--ink);
+        color: var(--cream);
+        font-size: 26px;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .sheet-bar span:last-child {
+        color: #cdb7c8;
+      }
+      svg.flat {
+        position: absolute;
+        left: 20px;
+        top: 96px;
+        width: 920px;
+        height: 920px;
+      }
+      .garment {
+        fill: rgba(250, 247, 242, 0.92);
+        stroke: var(--ink);
+        stroke-width: 5;
+        stroke-linejoin: round;
+        stroke-linecap: round;
+      }
+      .detail {
+        fill: none;
+        stroke: var(--ink);
+        stroke-width: 3;
+        stroke-linecap: round;
+      }
+      .topstitch {
+        fill: none;
+        stroke: var(--ink-subtle);
+        stroke-width: 2.5;
+        stroke-dasharray: 9 8;
+      }
+      .dim line,
+      .dim path {
+        fill: none;
+        stroke: var(--mauve);
+        stroke-width: 4;
+        stroke-linecap: round;
+      }
+      .tag rect {
+        fill: var(--mauve);
+      }
+      .tag .k {
+        fill: #e9d9e5;
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-weight: 600;
+        font-size: 17px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .tag .v {
+        fill: #ffffff;
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-weight: 800;
+        font-size: 34px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="techpack-callouts"
+      data-start="0"
+      data-duration="7"
+      data-width="1080"
+      data-height="1920"
+    >
+      <div class="stage">
+        <div class="head">
+          <div class="eyebrow" id="eyebrow"></div>
+          <h1 class="headline" id="title"></h1>
+        </div>
+
+        <div class="sheet" id="sheet">
+          <div class="sheet-bar"><span id="styleNo"></span><span>Front flat</span></div>
+          <svg class="flat" viewBox="0 0 800 800" aria-hidden="true">
+            <!-- T-shirt flat, drawn for this pack. -->
+            <path
+              class="garment draw"
+              pathLength="1"
+              d="M318 96 Q400 150 482 96 L612 150 L742 286 L662 352 L592 290 L592 668 L208 668 L208 290 L138 352 L58 286 L188 150 Z"
+            />
+            <path class="detail draw" pathLength="1" d="M318 96 Q400 118 482 96" />
+            <path class="detail draw" pathLength="1" d="M300 104 Q400 176 500 104" />
+            <path class="topstitch fade" d="M214 646 L586 646" />
+            <path class="topstitch fade" d="M72 276 L150 340" />
+            <path class="topstitch fade" d="M728 276 L650 340" />
+
+            <!-- 1. Chest width -->
+            <g class="dim" id="dim-0">
+              <line class="rule" pathLength="1" x1="214" y1="318" x2="586" y2="318" />
+              <path class="tick" d="M214 302 L214 334 M586 302 L586 334" />
+              <g class="tag" transform="translate(400 262)">
+                <rect x="-112" y="-38" width="224" height="76" rx="12" />
+                <text class="k" text-anchor="middle" y="-10"></text>
+                <text class="v" text-anchor="middle" y="24"></text>
+              </g>
+            </g>
+            <!-- 2. Body length -->
+            <g class="dim" id="dim-1">
+              <line class="rule" pathLength="1" x1="528" y1="134" x2="528" y2="662" />
+              <path class="tick" d="M512 134 L544 134 M512 662 L544 662" />
+              <g class="tag" transform="translate(528 470)">
+                <rect x="-112" y="-38" width="224" height="76" rx="12" />
+                <text class="k" text-anchor="middle" y="-10"></text>
+                <text class="v" text-anchor="middle" y="24"></text>
+              </g>
+            </g>
+            <!-- 3. Sleeve length -->
+            <g class="dim" id="dim-2">
+              <line class="rule" pathLength="1" x1="170" y1="132" x2="40" y2="268" />
+              <path class="tick" d="M158 121 L182 143 M28 257 L52 279" />
+              <g class="tag" transform="translate(136 76)">
+                <rect x="-124" y="-38" width="248" height="76" rx="12" />
+                <text class="k" text-anchor="middle" y="-10"></text>
+                <text class="v" text-anchor="middle" y="24"></text>
+              </g>
+            </g>
+            <!-- 4. Hem sweep -->
+            <g class="dim" id="dim-3">
+              <line class="rule" pathLength="1" x1="214" y1="706" x2="586" y2="706" />
+              <path class="tick" d="M214 690 L214 722 M586 690 L586 722" />
+              <g class="tag" transform="translate(400 756)">
+                <rect x="-112" y="-38" width="224" height="76" rx="12" />
+                <text class="k" text-anchor="middle" y="-10"></text>
+                <text class="v" text-anchor="middle" y="24"></text>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        <div class="signature" id="signature"></div>
+      </div>
+    </div>
+
+    <script>
+      const v = window.__hyperframes.getVariables();
+      const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const rich = (s) => esc(s).replace(/\*(.+?)\*/g, "<em>$1</em>");
+
+      document.getElementById("eyebrow").textContent = v.eyebrow;
+      document.getElementById("title").innerHTML = rich(v.title);
+      document.getElementById("styleNo").textContent = v.styleNo;
+      document.getElementById("signature").textContent = v.signature;
+
+      const callouts = String(v.callouts)
+        .split(";")
+        .map((c) => c.split("|").map((x) => x.trim()))
+        .filter((c) => c[0]);
+      for (let i = 0; i < 4; i++) {
+        const g = document.getElementById("dim-" + i);
+        const c = callouts[i];
+        if (!c) {
+          g.style.display = "none";
+          continue;
+        }
+        g.querySelector(".k").textContent = c[0];
+        g.querySelector(".v").textContent = c[1] ?? "";
+      }
+
+      const tl = gsap.timeline({ paused: true });
+      gsap.set(".draw, .rule", { strokeDasharray: 1, strokeDashoffset: 1 });
+      gsap.set(".garment", { fillOpacity: 0 });
+
+      tl.from("#eyebrow", { opacity: 0, y: 24, duration: 0.45, ease: "power3.out" }, 0.1);
+      tl.from("#title", { opacity: 0, y: 46, duration: 0.6, ease: "power3.out" }, 0.22);
+      tl.from("#sheet", { opacity: 0, y: 90, duration: 0.6, ease: "power3.out" }, 0.6);
+
+      // The flat draws itself, then fills in like marker on paper.
+      tl.to(".garment", { strokeDashoffset: 0, duration: 1.3, ease: "power2.inOut" }, 1.1);
+      tl.to(".detail", { strokeDashoffset: 0, duration: 0.5, ease: "power2.out", stagger: 0.12 }, 2.1);
+      tl.to(".garment", { fillOpacity: 1, duration: 0.5, ease: "power1.out" }, 2.3);
+      tl.from(".fade", { opacity: 0, duration: 0.4, stagger: 0.08 }, 2.5);
+
+      // Each measurement: the rule extends, ticks snap on, the tag pops.
+      callouts.slice(0, 4).forEach((_, i) => {
+        const at = 3.0 + i * 0.75;
+        const g = "#dim-" + i;
+        tl.to(`${g} .rule`, { strokeDashoffset: 0, duration: 0.4, ease: "power2.out" }, at);
+        tl.from(`${g} .tick`, { opacity: 0, duration: 0.15 }, at + 0.3);
+        tl.from(`${g} .tag rect, ${g} .tag text`, { opacity: 0, duration: 0.2 }, at + 0.28);
+        tl.from(`${g} .tag rect`, { scale: 0.6, transformOrigin: "50% 50%", duration: 0.4, ease: "back.out(2.4)" }, at + 0.28);
+      });
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["techpack-callouts"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
