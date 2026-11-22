@@ -6,7 +6,16 @@ html, body { background: #203028 !important; -webkit-print-color-adjust: exact; 
 body { padding: 0 56px !important; }
 .wrap { gap: 30px !important; max-width: none !important; }
 section { gap: 20px !important; }
-.step { padding-top: 18px !important; }
+.step { padding-top: 8px !important; }
+.step h3 { font-size: 23px !important; }
+.step p { font-size: 13.5px !important; line-height: 1.5; }
+.step .num { font-size: 44px !important; }
+.panel { gap: 10px !important; }
+.step .body { gap: 7px !important; }
+.code pre { line-height: 1.45 !important; padding: 7px 14px !important; font-size: 11.5px !important; }
+.code .bar { padding: 3px 8px 3px 14px !important; }
+.step .time { font-size: 9.5px !important; }
+.panel { gap: 14px !important; }
 .f { padding-bottom: 18px !important; }
 .row, .fix { padding: 12px 0 !important; }
 .hero { padding-top: 0 !important; }
