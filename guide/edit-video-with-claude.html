@@ -579,9 +579,9 @@ npm run setup</pre></div>
       <p>Yellow dots are your turns. The rest is Claude working while you do something else.</p>
     </div>
     <div class="flow">
-      <div class="f you"><div class="dot">1</div><div><div class="who">You</div><h3>Film your take</h3><p>Vertical, with some room above your head. Keep rolling through mistakes and restarts. To try several openings, say "hook number one", deliver it, then "hook number two".</p></div></div>
+      <div class="f you"><div class="dot">1</div><div><div class="who">You</div><h3>Film your take</h3><p>Vertical, with some room above your head. Keep rolling through mistakes and restarts. To try several openings, say "hook number one", deliver it, then "hook number two". Claude will ask which hook to keep.</p></div></div>
       <div class="f you"><div class="dot">2</div><div><div class="who">You</div><h3>Drop the file in the raw folder</h3><p>Create a <code>Video-Editing/raw</code> folder inside <code>claude-edit</code> and put the video there. Any MP4 or MOV works.</p></div></div>
-      <div class="f you"><div class="dot">3</div><div><div class="who">You · optional</div><h3>Add your inspiration</h3><p>Screenshot videos whose layout, fonts, colours or style you like, and drop the screenshots into the same <code>raw</code> folder. Claude looks at them and asks what you like about each. I used one screenshot and said "I like the font, font colours and placements".</p></div></div>
+      <div class="f you"><div class="dot">3</div><div><div class="who">You · optional</div><h3>Add your inspiration</h3><p>Screenshot videos whose layout, fonts, colours or style you like, and drop the screenshots into the same <code>raw</code> folder. Claude looks at them and asks what you like about each. A whole reference video works too. Give it now, at the start: changing the look later means Claude redoes its work. I used one screenshot and said "I like the font, font colours and placements".</p></div></div>
       <div class="f you"><div class="dot">4</div><div><div class="who">You</div><h3>Start the edit</h3><p>In a new Claude Code chat, type the command with the path to your video. If the take is only your face, with no screen recording, say so in the same message.</p>
         <div class="code"><div class="bar"><span>Claude Code chat</span><button type="button" data-copy>Copy</button></div><pre>/claude-edit "Video-Editing/raw/my-take.mp4" This is a face-only take filmed on my phone, vertical. The screenshots in the same folder are my inspiration for the graphics.</pre></div></div></div>
       <div class="f"><div class="dot">5</div><div><div class="who">Claude · about 30 minutes for me</div><h3>Transcribes and cuts</h3><p>It removes the pauses and bad takes, then stops and plays you the cut.</p></div></div>
@@ -591,6 +591,8 @@ npm run setup</pre></div>
       <div class="f"><div class="dot">9</div><div><div class="who">Claude</div><h3>Adds sound and exports</h3><p>When the picture is right, say you are happy. It adds sound, takes sound notes the same way, and saves the final MP4 in the <code>out</code> folder.</p></div></div>
       <div class="f you"><div class="dot">10</div><div><div class="who">You</div><h3>Send it to your phone</h3><p>The <code>out</code> folder holds the full-quality video and a smaller phone copy. AirDrop or message the phone copy to yourself, watch it once on your phone, then post it. If there is no phone copy, ask Claude to make one.</p></div></div>
     </div>
+
+    <p class="note"><strong>What is a beat?</strong> The review screen splits your video into short sections called beats (b01, b02, b03). Each one is a few seconds where something changes on screen. A note fixes only its own beat, so changes come back in minutes, not hours.</p>
 
     <div class="player" id="player" data-step="1">
       <div class="label">The review screen · how to ask for a change</div>
@@ -619,6 +621,16 @@ npm run setup</pre></div>
         <div class="bubble">"Add the title Editing with Claude on top of the screen, behind my head."</div>
       </div>
     </div>
+    <div class="head" style="margin-top:20px">
+      <div class="label">More ways to steer the edit</div>
+      <h3>You can also do <b>this</b></h3>
+    </div>
+    <div class="rows">
+      <div class="row"><span class="no">01</span><span class="k">Compare before and after</span><span class="v">A beat that changed shows a <strong>Before / after</strong> button. Click it to see the old and new version side by side.</span></div>
+      <div class="row"><span class="no">02</span><span class="k">Undo a round</span><span class="v">If a round of changes made things worse, type "go back one round" in the chat.</span></div>
+      <div class="row"><span class="no">03</span><span class="k">Type notes in the chat</span><span class="v">You do not have to use the Note button. Say it in the chat: "on beat 12, remove the bar at the bottom".</span></div>
+      <div class="row"><span class="no">04</span><span class="k">Give Claude your own material</span><span class="v">Photos, clips, screenshots or links, at any point. I dropped a clip of my dog into the raw folder and said so, and Claude put it in the video.</span></div>
+    </div>
     <p class="note">Only if you start Claude Code from the Mac Terminal instead of the app: run <code>source .venv/bin/activate</code> in the <code>claude-edit</code> folder first.</p>
   </section>
 
@@ -631,13 +643,26 @@ npm run setup</pre></div>
     <div class="rows">
       <div class="row"><span class="no">01</span><span class="k">Approve the picture</span><span class="v">When the video looks right, click <strong>Approved</strong> at the top right of the review screen, or tell Claude you are happy with it.</span></div>
       <div class="row"><span class="no">02</span><span class="k">Claude adds the effects</span><span class="v">It places sounds where things happen on screen: a whoosh when the layout changes, a pop when a title appears, a pencil sound on a strike-through. My video got 12.</span></div>
-      <div class="row"><span class="no">03</span><span class="k">Listen</span><span class="v">Click the <strong>Sound</strong> button under the video, or press <span class="key">S</span>, to hear the video with the effects.</span></div>
+      <div class="row"><span class="no">03</span><span class="k">Listen</span><span class="v">Click the <strong>Sound</strong> button under the video, or press <span class="key">S</span>, to switch from voice only to the version with the effects.</span></div>
       <div class="row"><span class="no">04</span><span class="k">Change what you don't like</span><span class="v">Open the <strong>Sound</strong> tab on the right. Click the <strong>Note</strong> button beside an effect and type what you want: "too loud", "remove this one", "use a softer sound". Press Enter, then type go in the chat.</span></div>
       <div class="row"><span class="no">05</span><span class="k">Ask for more</span><span class="v">To add an effect where there is none, pause on that moment, press <span class="key">N</span> and ask for it: "add a pop here".</span></div>
       <div class="row"><span class="no">06</span><span class="k">Final export</span><span class="v">Once the sound is right, Claude builds the final video.</span></div>
     </div>
+    <p class="note"><strong>More sound options.</strong> You can ask in the chat to make all the effects louder or quieter at once. You can also give Claude your own sound files and ask it to use them.</p>
     <p class="note"><strong>No music.</strong> claude-edit adds sound effects only. Add music in Instagram or TikTok when you post; their tracks are licensed for the platform.</p>
     <p class="note"><strong>Your voice.</strong> Voice clean-up is not automatic. I asked for mine to be "more clear and soothing" and Claude did it. You can ask the same way.</p>
+  </section>
+
+  <section>
+    <div class="head">
+      <div class="label">Next</div>
+      <h2>After your first <b>video</b></h2>
+    </div>
+    <div class="rows">
+      <div class="row"><span class="no">01</span><span class="k">Let Claude remember</span><span class="v">At the end, Claude lists two or three things it learned from your notes and asks whether to keep them as rules for next time. Keep the ones you would repeat on every video. Skip the rest, so the rules stay short.</span></div>
+      <div class="row"><span class="no">02</span><span class="k">Three hooks, three videos</span><span class="v">Record three hooks in one take. Ask Claude for three versions with the same body and a different opening each.</span></div>
+      <div class="row"><span class="no">03</span><span class="k">Test them as Trial reels</span><span class="v">On Instagram, post each version as a Trial reel. It is shown only to people who do not follow you. After a day, compare the views and share the winner with everyone.</span></div>
+    </div>
   </section>
 
   <section>
@@ -683,7 +708,7 @@ npm run setup</pre></div>
       <div class="label">Who made this</div>
       <h2>Hi, I'm <b>Shanley</b></h2>
       <p>I'm a fashion designer and AI consultant. I stopped posting because editing ate my weekends, and this setup is how I started again.</p>
-      <p><strong>Made your first edit?</strong> Tag me when you post it. I want to see it.</p>
+      <p><strong>Made your first edit?</strong> Tag @shanley.ai on Instagram when you post it. I want to see it.</p>
       <p><strong>Want help with more than video?</strong> I help brands put AI to work: <a href="https://shanley.ai/consulting">shanley.ai/consulting</a></p>
     </div>
   </section>
