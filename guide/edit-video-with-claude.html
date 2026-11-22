@@ -570,6 +570,12 @@ npm run setup</pre></div>
 <div>│&nbsp;&nbsp;&nbsp;└─ out <span class="why">&nbsp;← YOUR FINISHED VIDEO APPEARS HERE</span></div>
 <div class="dim">└─ shanley-animations &nbsp;(leave it where it is)</div>
     </div>
+    <div class="rows">
+      <div class="row"><span class="no">01</span><span class="k">claude-edit, shanley-animations</span><span class="v">Made for you during setup. Do not rename or move them.</span></div>
+      <div class="row"><span class="no">02</span><span class="k">Video-Editing and raw</span><span class="v">You make these. The easy way: in the Claude chat, type "create a folder called Video-Editing with a folder called raw inside it, and open it for me". Then drop your video in.</span></div>
+      <div class="row"><span class="no">03</span><span class="k">Any name works</span><span class="v">Those two names are only my habit. Call the folders anything and keep them anywhere you like. What matters is that you tell Claude where the video is when you start the edit.</span></div>
+      <div class="row"><span class="no">04</span><span class="k">out</span><span class="v">Claude makes this one when it saves your finished video. You do not create it.</span></div>
+    </div>
   </section>
 
   <section>
@@ -580,7 +586,7 @@ npm run setup</pre></div>
     </div>
     <div class="flow">
       <div class="f you"><div class="dot">1</div><div><div class="who">You</div><h3>Film your take</h3><p>Vertical, with some room above your head. Keep rolling through mistakes and restarts. To try several openings, say "hook number one", deliver it, then "hook number two". Claude will ask which hook to keep.</p></div></div>
-      <div class="f you"><div class="dot">2</div><div><div class="who">You</div><h3>Drop the file in the raw folder</h3><p>Create a <code>Video-Editing/raw</code> folder inside <code>claude-edit</code> and put the video there. Any MP4 or MOV works.</p></div></div>
+      <div class="f you"><div class="dot">2</div><div><div class="who">You</div><h3>Drop the file in the raw folder</h3><p>Put the video in your <code>raw</code> folder, or any folder you like (see "Open the right folder" above). Any MP4 or MOV works.</p></div></div>
       <div class="f you"><div class="dot">3</div><div><div class="who">You · optional</div><h3>Add your inspiration</h3><p>Screenshot videos whose layout, fonts, colours or style you like, and drop the screenshots into the same <code>raw</code> folder. Claude looks at them and asks what you like about each. A whole reference video works too. Give it now, at the start: changing the look later means Claude redoes its work. I used one screenshot and said "I like the font, font colours and placements".</p></div></div>
       <div class="f you"><div class="dot">4</div><div><div class="who">You</div><h3>Start the edit</h3><p>In a new Claude Code chat, type the command with the path to your video. If the take is only your face, with no screen recording, say so in the same message.</p>
         <div class="code"><div class="bar"><span>Claude Code chat</span><button type="button" data-copy>Copy</button></div><pre>/claude-edit "Video-Editing/raw/my-take.mp4" This is a face-only take filmed on my phone, vertical. The screenshots in the same folder are my inspiration for the graphics.</pre></div></div></div>
