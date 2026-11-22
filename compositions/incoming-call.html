@@ -5,7 +5,7 @@
     {"id":"answer","type":"string","label":"Seconds until the call is picked up (0: it keeps ringing)","default":"1.8"},
     {"id":"answered","type":"string","label":"Small line once it is picked up","default":"Connected"},
     {"id":"y","type":"string","label":"Where the card sits, as a percent from the top","default":"8"},
-    {"id":"look","type":"string","label":"Colours: forest (green, cream, yellow) or plum (the site colours)","default":"forest"},{"id":"layer","type":"string","label":"Which part to draw (set by the script)","default":"all"}
+    {"id":"look","type":"string","label":"Colours: forest (green, cream, gold) or plum (the site colours)","default":"forest"},{"id":"layer","type":"string","label":"Which part to draw (set by the script)","default":"all"}
   ]'>
   <head>
     <meta charset="UTF-8" />
@@ -17,14 +17,14 @@
 
       .card { left: 60px; width: 960px; height: 220px; }
       .avatar { position: absolute; left: 34px; top: 40px; width: 140px; height: 140px; border-radius: 50%; background: var(--forest); border: 1px solid var(--hair); display: flex; align-items: center; justify-content: center; font-size: 84px; line-height: 1; }
-      .ring { position: absolute; left: 34px; top: 40px; width: 140px; height: 140px; border-radius: 50%; border: 2px solid var(--yellow); opacity: 0; }
+      .ring { position: absolute; left: 34px; top: 40px; width: 140px; height: 140px; border-radius: 50%; border: 2px solid var(--gold); opacity: 0; }
       .who { position: absolute; left: 206px; top: 50px; }
       .who .serif { font-size: 84px; line-height: 1; margin-top: 14px; white-space: nowrap; }
       .btn { position: absolute; top: 60px; width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
       .btn svg { width: 46px; height: 46px; }
       #decline { right: 156px; border: 1px solid var(--hair); }
       #decline svg { transform: rotate(135deg); fill: var(--second); }
-      #accept { right: 34px; background: var(--yellow); }
+      #accept { right: 34px; background: var(--gold); }
       #accept svg { fill: var(--bar); }
     </style>
   </head>
@@ -36,7 +36,7 @@
           <div class="block card" id="card">
             <div class="ring" id="ring"></div>
             <div class="avatar serif" id="avatar"></div>
-            <div class="who"><div class="mono" id="label"></div><div class="mono" id="answered" style="position:absolute;left:0;top:0;color:var(--yellow);opacity:0"></div><div class="serif" id="caller"></div></div>
+            <div class="who"><div class="mono" id="label"></div><div class="mono" id="answered" style="position:absolute;left:0;top:0;color:var(--gold);opacity:0"></div><div class="serif" id="caller"></div></div>
             <div class="btn" id="decline"><svg viewBox="0 0 24 24"><path d="M6 3h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 4 5a2 2 0 0 1 2-2z" /></svg></div>
             <div class="btn" id="accept"><svg viewBox="0 0 24 24"><path d="M6 3h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 4 5a2 2 0 0 1 2-2z" /></svg></div>
           </div>

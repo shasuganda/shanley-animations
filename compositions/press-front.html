@@ -2,9 +2,9 @@
 <html lang="en" class="overlay" data-resolution="portrait" data-composition-variables='[
     {"id":"paper","type":"string","label":"Name of the newspaper","default":"The Daily Edit"},
     {"id":"date","type":"string","label":"Line under the name, parts separated by |","default":"Vol. 01|Late edition|New York"},
-    {"id":"headline","type":"string","label":"The headline (a word in *stars* gets a yellow marker)","default":"Local woman lets Claude *edit*"},
+    {"id":"headline","type":"string","label":"The headline (a word in *stars* gets a gold marker)","default":"Local woman lets Claude *edit*"},
     {"id":"caption","type":"string","label":"Line under the picture","default":"Pictured: the editor, not editing."},
-    {"id":"look","type":"string","label":"Colours: forest (green, cream, yellow) or plum (the site colours)","default":"forest"},{"id":"layer","type":"string","label":"Which part to draw (set by the script)","default":"all"}
+    {"id":"look","type":"string","label":"Colours: forest (green, cream, gold) or plum (the site colours)","default":"forest"},{"id":"layer","type":"string","label":"Which part to draw (set by the script)","default":"all"}
   ]'>
   <head>
     <meta charset="UTF-8" />
@@ -22,7 +22,7 @@
       #name { position: absolute; left: 0; width: 1080px; top: 132px; text-align: center; font-size: 150px; line-height: 1; white-space: nowrap; }
       #rule { position: absolute; left: 60px; width: 960px; top: 302px; height: 10px; border-top: 4px solid #14201a; border-bottom: 1px solid #14201a; }
       #headline { position: absolute; left: 60px; width: 960px; top: 340px; height: 350px; display: flex; align-items: center; font-size: 108px; line-height: 0.98; }
-      #headline em { font-style: normal; color: #14201a; background: #f5cf45; padding: 0 12px; }
+      #headline em { font-style: normal; color: #14201a; background: #d4af37; padding: 0 12px; }
       #caption { position: absolute; left: 60px; top: 1598px; font-size: 20px; letter-spacing: 0.14em; }
       .col { position: absolute; top: 1660px; width: 300px; height: 150px; background: repeating-linear-gradient(180deg, rgba(20, 32, 26, 0.55) 0 3px, transparent 3px 19px); }
     </style>

@@ -1,6 +1,6 @@
 ---
 name: shanley-style
-description: Apply Shanley's signature look, the one from her "Editing with Claude" video (forest green ground, cream Instrument Serif type, one yellow accent word, small spaced-out mono labels, serif captions low on screen, title behind the head). Use when someone types /shanley-style, says "my style", "Shanley style", "the forest look" or "like my editing video", or starts a video edit, an animation, a title card, a document or a page that should match her videos.
+description: Apply Shanley's signature look, the one from her "Editing with Claude" video (forest green ground, cream Instrument Serif type, one gold accent word, small spaced-out mono labels, serif captions low on screen, title behind the head). Use when someone types /shanley-style, says "my style", "Shanley style", "the forest look" or "like my editing video", or starts a video edit, an animation, a title card, a document or a page that should match her videos.
 ---
 
 # The Shanley style
@@ -22,19 +22,19 @@ The exact stylesheet rules from that video are saved at `{{PACK}}/looks/forest-e
 | Main type | cream `#f0e8e0` |
 | Secondary type | `#d0d0c0` |
 | Small labels | khaki `#b8b088` |
-| Accent | warm yellow `#f5cf45` |
+| Accent | gold `#d4af37` |
 
 Rules she set in her own words:
 
 - Forest green, not olive. She rejected the olive ground and the olive caption bar.
-- The accent is yellow because the first version was "too tone down". Use it on one word per title, the last word of a caption, ticks and highlights. Never on a whole sentence.
+- The accent is gold `#d4af37`. On the "Editing with Claude" video it was a warm yellow (`#f5cf45`), which she picked because the first version was "too tone down"; on 22 November 2026 she changed the palette from yellow to gold. Stills from that video still show the yellow. Use the accent on one word per title, the last word of a caption, ticks and highlights. Never on a whole sentence.
 - No ivory or white backgrounds, no clay or orange accent, no gradients, no drop shadows on cards.
 
 ## Type
 
 - **Instrument Serif** for every title and every caption. Regular weight, sentence case, letter spacing about -0.01em.
-- Titles are two-tone: cream words with one word in yellow ("The *truth*", "How it *works*", "Comment *edit*"). The yellow word is upright, not italic.
-- Italic Instrument Serif in yellow is for a small line resting on a big title ("*Editing with*" above "CLAUDE").
+- Titles are two-tone: cream words with one word in gold ("The *truth*", "How it *works*", "Comment *edit*"). The gold word is upright, not italic.
+- Italic Instrument Serif in gold is for a small line resting on a big title ("*Editing with*" above "CLAUDE").
 - **JetBrains Mono**, medium, uppercase, letter spacing 0.22em to 0.3em, for small labels: "NO. 01 · NOVEMBER 2026 · EDITED BY CLAUDE", "STEP 01 OF 04", "EVERY VIDEO", "RAW TAKE 3:23". Numbered rows use "01", "02", "03" in mono.
 - Inter only for interface text inside rebuilt app screens.
 
@@ -49,12 +49,12 @@ Rules she set in her own words:
 ## Captions
 
 - A serif bar, not a mono chip: cream Instrument Serif on a `#14201a` bar with a faint 1 px cream outline, sentence case, two or three words at a time.
-- The last word of a sentence is yellow.
+- The last word of a sentence is gold.
 - **Low on the screen**, over her chest (about 85 to 90 percent down). She asked for the text at the bottom, not at the top or on the seam.
 
 ## The opening hook
 
-Her whole frame, with a title between the room and her: mono issue line, a small yellow italic line, then one huge cream serif word that her head overlaps. Build it with the pack's effect:
+Her whole frame, with a title between the room and her: mono issue line, a small gold italic line, then one huge cream serif word that her head overlaps. Build it with the pack's effect:
 
 ```bash
 node "{{PACK}}/scripts/effect.mjs" cover-masthead --video /path/to/take.mp4 --from 0 --to 5 \
@@ -87,7 +87,7 @@ Avoid 3D objects, glows, emoji, stock icons and busy backgrounds.
 
 ## Using it in a claude-edit run
 
-claude-edit starts in its own default ivory look. To get this one, tell the run in Shanley's words: "Use my forest editorial look: forest green ground, cream Instrument Serif, yellow accent word, serif captions at the bottom, split layout, no full-screen face except the hook." Then:
+claude-edit starts in its own default ivory look. To get this one, tell the run in Shanley's words: "Use my forest editorial look: forest green ground, cream Instrument Serif, gold accent word, serif captions at the bottom, split layout, no full-screen face except the hook." Then:
 
 1. Append `{{PACK}}/looks/forest-editorial.css` after the default rules in that run's `tools_local/style.css`, and copy the Instrument Serif font files into the run's fonts folder (they are in `{{PACK}}/assets/fonts/`).
 2. Set every caption to the low position.
@@ -99,5 +99,5 @@ Do not edit claude-edit's shared style files; change only the run's own copies.
 ## Using it elsewhere
 
 - **Pack effects**: `cover-masthead` and `backdrop-word` use this look by default (`look=forest`). Pass `--set look=plum` only for site-coloured pieces.
-- **Pages, guides and documents**: forest ground, cream text, yellow for one emphasised word per heading and for key numbers, mono uppercase labels above sections, hairlines instead of boxes. Fonts load from Google Fonts as Instrument Serif, JetBrains Mono and Inter.
+- **Pages, guides and documents**: forest ground, cream text, gold for one emphasised word per heading and for key numbers, mono uppercase labels above sections, hairlines instead of boxes. Fonts load from Google Fonts as Instrument Serif, JetBrains Mono and Inter.
 - **Thumbnails and stills**: a frame of her with the big serif word behind her head, or a full forest card with a two-tone title.

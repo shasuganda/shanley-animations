@@ -7,7 +7,7 @@
   --cream: #f0e8e0;
   --second: #d0d0c0;
   --khaki: #b8b088;
-  --yellow: #f5cf45;
+  --gold: #d4af37;
 }
 /* look=plum swaps in the site colours. */
 html.plum {
@@ -18,7 +18,7 @@ html.plum {
   --cream: #faf7f2;
   --second: #e6dbe3;
   --khaki: #dcb9d3;
-  --yellow: #dcb9d3;
+  --gold: #dcb9d3;
 }
 .mono {
   font-family: var(--font-mono);
@@ -37,7 +37,7 @@ html.plum {
 }
 .serif em {
   font-style: normal;
-  color: var(--yellow);
+  color: var(--gold);
 }
 /* A flat block: deeper green, hairline edge, nearly square corners. */
 .block {

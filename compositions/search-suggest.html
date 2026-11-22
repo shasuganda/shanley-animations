@@ -4,7 +4,7 @@
     {"id":"suggestions","type":"string","label":"The suggestions that drop down, separated by |","default":"how to edit video with claude|how to edit video faster|how to edit video without an editor"},
     {"id":"pick","type":"string","label":"Which suggestion gets picked, counting from 1 (0: none)","default":"1"},
     {"id":"y","type":"string","label":"Where the search bar sits, as a percent from the top","default":"8"},
-    {"id":"look","type":"string","label":"Colours: forest (green, cream, yellow) or plum (the site colours)","default":"forest"},{"id":"layer","type":"string","label":"Which part to draw (set by the script)","default":"all"}
+    {"id":"look","type":"string","label":"Colours: forest (green, cream, gold) or plum (the site colours)","default":"forest"},{"id":"layer","type":"string","label":"Which part to draw (set by the script)","default":"all"}
   ]'>
   <head>
     <meta charset="UTF-8" />
@@ -17,7 +17,7 @@
       .bar { left: 60px; width: 960px; height: 132px; }
       .bar svg { position: absolute; left: 34px; top: 38px; width: 54px; height: 54px; fill: none; stroke: var(--khaki); stroke-width: 2; }
       #query { position: absolute; left: 112px; top: 26px; font-size: 62px; line-height: 1.2; white-space: nowrap; }
-      #caret { display: inline-block; width: 3px; height: 62px; margin-left: 6px; background: var(--yellow); vertical-align: -10px; }
+      #caret { display: inline-block; width: 3px; height: 62px; margin-left: 6px; background: var(--gold); vertical-align: -10px; }
       .drop { left: 60px; width: 960px; border-top: none; border-radius: 0 0 4px 4px; overflow: hidden; }
       .sug { display: flex; align-items: baseline; gap: 30px; padding: 22px 34px 26px; border-top: 1px solid var(--hair); }
       .sug .serif { font-size: 50px; color: var(--second); white-space: nowrap; }
@@ -63,7 +63,7 @@
       if (pick >= 1 && pick <= items.length) {
         const when = 0.3 + typeFor + 0.35;
         tl.set("#s" + (pick - 1), { backgroundColor: "#14201a" }, when);
-        tl.set(`#s${pick - 1} span`, { color: "#f5cf45" }, when);
+        tl.set(`#s${pick - 1} span`, { color: "#d4af37" }, when);
       }
       fx.done("search-suggest", tl);
     </script>

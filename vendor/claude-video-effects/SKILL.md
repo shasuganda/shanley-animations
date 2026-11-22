@@ -102,7 +102,7 @@ A single effect needs no plan: `.venv/bin/python scripts/fx.py orbit <video> <ou
 Aliases work too: `bill`, `to-do`, `follow`, `stamp`, `countdown`, `cover`, `rain`, `pause`.
 
 ## Style
-Everything renders in the Shanley forest look by default (forest green blocks, cream Instrument Serif, one yellow accent). Add `--style original` to any `fx.py` command for the look the effects shipped with. A `color` option still wins over the look.
+Everything renders in the Shanley forest look by default (forest green blocks, cream Instrument Serif, one gold accent). Add `--style original` to any `fx.py` command for the look the effects shipped with. A `color` option still wins over the look.
 
 Several effects show a profile name or handle (`name`, `handle`, `text` in `reel-frame`, `pastel-word`, `profile-wall`, `glass-widgets`, `check-pills`, `headline-wall`). The defaults are the original author's. Always pass the speaker's own.
 

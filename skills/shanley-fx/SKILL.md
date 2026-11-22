@@ -56,6 +56,8 @@ node "{{PACK}}/scripts/effect.mjs" list     # every effect with every setting an
    - the moment lands on the word
 5. Give them the file path. It is a draft for them to approve.
 
+**Finding when a word is said.** Run `{{PACK}}/vendor/claude-video-effects/.venv/bin/python {{PACK}}/vendor/claude-video-effects/scripts/words.py <video>`. It prints each word with its time in seconds and saves them beside the video. The first run downloads a small speech model.
+
 ## Things to know
 
 - **The empty room.** `room-doors`, `dolly-zoom`, `rack-focus`, `layer-explode` and `blow-away` need the room without the speaker. It is filled in from the pixels around them, which leaves a soft patch where they were. That is hidden while they stand in front of it. In `blow-away` it shows once they are gone: for a clean result pass `--set room=/path/to/photo-of-the-empty-room.jpg`, shot from the same spot.

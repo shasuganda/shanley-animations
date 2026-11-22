@@ -2,7 +2,7 @@
 
 Added by Shanley AI; not part of the original pack. The effects themselves are untouched: this file
 changes what they draw WITH. Type becomes Instrument Serif and Geist Mono, every colour is moved onto the
-forest palette (forest green blocks, cream type, one yellow accent), glass and glow become flat blocks
+forest palette (forest green blocks, cream type, one gold accent), glass and glow become flat blocks
 with a hairline edge, and large shapes get nearly square corners.
 
 fx.py calls apply(globals()) unless it is run with --style original.
@@ -12,7 +12,7 @@ import numpy as np
 from PIL import Image as _Image, ImageColor, ImageDraw as _ImageDraw, ImageFont
 
 FOREST, DEEP, BAR = (32, 48, 40), (26, 40, 33), (20, 32, 26)
-HAIR, CREAM, SECOND, KHAKI, YELLOW = (60, 82, 70), (240, 232, 224), (208, 208, 192), (184, 176, 136), (245, 207, 69)
+HAIR, CREAM, SECOND, KHAKI, GOLD = (60, 82, 70), (240, 232, 224), (208, 208, 192), (184, 176, 136), (212, 175, 55)
 K = 1.0   # output width / 1080, set by fx.py once the size is known
 ON = False   # True once apply() has run
 
@@ -42,12 +42,12 @@ def _light(px):
 
 
 def ink(col, under=None):
-    """Type and strokes: cream, khaki for the quiet lines, yellow for the accent; dark ink on anything pale."""
+    """Type and strokes: cream, khaki for the quiet lines, gold for the accent; dark ink on anything pale."""
     p = _parse(col)
     if p is None: return col
     k = _kind(*p[:3])
     if _light(under): out = BAR
-    else: out = {'light': CREAM, 'dark': CREAM, 'mid': KHAKI, 'accent': YELLOW}[k]
+    else: out = {'light': CREAM, 'dark': CREAM, 'mid': KHAKI, 'accent': GOLD}[k]
     return out + (p[3],)
 
 
@@ -57,13 +57,13 @@ def stroke(col, under=None):
     if p is None: return col
     k = _kind(*p[:3])
     if _light(under) and k != 'dark': out = BAR
-    else: out = {'light': CREAM, 'dark': BAR, 'mid': HAIR, 'accent': YELLOW}[k]
+    else: out = {'light': CREAM, 'dark': BAR, 'mid': HAIR, 'accent': GOLD}[k]
     return out + (p[3],)
 
 
 def area(col, w, h, round_=False):
     """A filled shape. Returns (fill, outline or None). Big shapes become flat green blocks with a thin edge;
-    small ones (dots, knobs, ticks, underlines) carry the cream or the yellow."""
+    small ones (dots, knobs, ticks, underlines) carry the cream or the gold."""
     p = _parse(col)
     if p is None: return col, None
     k = _kind(*p[:3])
@@ -71,9 +71,9 @@ def area(col, w, h, round_=False):
     big = min(w, h) >= lo * K and w * h >= floor * K * K
     if big:
         fill = BAR if k in ('dark', 'accent') else DEEP
-        edge = (YELLOW if k == 'accent' else HAIR) if p[3] >= 200 else None
+        edge = (GOLD if k == 'accent' else HAIR) if p[3] >= 200 else None
     else:
-        fill = {'light': CREAM, 'dark': BAR, 'mid': HAIR, 'accent': YELLOW}[k]; edge = None
+        fill = {'light': CREAM, 'dark': BAR, 'mid': HAIR, 'accent': GOLD}[k]; edge = None
     return fill + (p[3],), (edge + (p[3],) if edge else None)
 
 
@@ -99,7 +99,7 @@ class ForestDraw(_ImageDraw.ImageDraw):
         w, h = _box(xy); edge = None
         if fill is not None: fill, edge = area(fill, w, h, round_)
         if outline is not None: outline = stroke(outline)
-        elif edge is not None: outline, width = edge, max(1, int(round((2 if edge[:3] == YELLOW else 1) * K)))
+        elif edge is not None: outline, width = edge, max(1, int(round((2 if edge[:3] == GOLD else 1) * K)))
         return fill, outline, width
 
     def rectangle(self, xy, fill=None, outline=None, width=1):
@@ -209,7 +209,7 @@ def apply(g):
     for k in ('serif', 'didonei', 'hand'): g['FONT'][k] = italic
     g['FONT']['mono'] = mono
     for k in ('mont', 'monts', 'montb', 'didone', 'didoneb', 'didonei'): g['WGHT'].pop(k, None)
-    g['CREAM'], g['INK'], g['PEACH'], g['YELLOW'], g['GREEN'] = CREAM, BAR, YELLOW, YELLOW, YELLOW
+    g['CREAM'], g['INK'], g['PEACH'], g['YELLOW'], g['GREEN'] = CREAM, BAR, GOLD, GOLD, GOLD
 
     g['ImageDraw'] = _Proxy(_ImageDraw, Draw=lambda im, mode=None: ForestDraw(im, mode))
     g['Image'] = _Proxy(_Image, new=_new)

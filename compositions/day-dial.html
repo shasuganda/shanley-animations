@@ -5,7 +5,7 @@
     {"id":"label","type":"string","label":"Small line above the dial (empty to hide)","default":""},
     {"id":"radius","type":"string","label":"Size of the dial, in pixels from its middle to the words","default":"400"},
     {"id":"turns","type":"string","label":"How many times it spins before landing","default":"1.5"},
-    {"id":"headTop","type":"string","label":"Top of your head in pixels (set by the script)","default":"800"},{"id":"centreX","type":"string","label":"Middle of you in pixels (set by the script)","default":"540"},{"id":"look","type":"string","label":"Colours: forest (green, cream, yellow) or plum (the site colours)","default":"forest"},{"id":"layer","type":"string","label":"Which part to draw (set by the script)","default":"all"}
+    {"id":"headTop","type":"string","label":"Top of your head in pixels (set by the script)","default":"800"},{"id":"centreX","type":"string","label":"Middle of you in pixels (set by the script)","default":"540"},{"id":"look","type":"string","label":"Colours: forest (green, cream, gold) or plum (the site colours)","default":"forest"},{"id":"layer","type":"string","label":"Which part to draw (set by the script)","default":"all"}
   ]'>
   <head>
     <meta charset="UTF-8" />
@@ -20,7 +20,7 @@
       .item { position: absolute; left: 0; top: 0; width: 0; height: 0; }
       .item span { position: absolute; left: -200px; width: 400px; text-align: center; font-size: 92px; line-height: 1; white-space: nowrap; }
       .tick { position: absolute; left: -1px; width: 2px; height: 22px; background: var(--khaki); opacity: 0.7; }
-      #pointer { position: absolute; width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 30px solid var(--yellow); }
+      #pointer { position: absolute; width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 30px solid var(--gold); }
       #label { position: absolute; left: 0; width: 1080px; text-align: center; }
     </style>
   </head>
@@ -64,7 +64,7 @@
       const tl = gsap.timeline({ paused: true });
       tl.from(["#band", "#dial", "#pointer", "#label"], { opacity: 0, duration: 0.2 }, 0);
       tl.fromTo("#dial", { rotation: end + 360 * num("turns", 1.5) }, { rotation: end, duration: 1.3, ease: "power3.out" }, 0.1);
-      tl.set("#i" + at, { color: "#f5cf45" }, 1.25);
+      tl.set("#i" + at, { color: "#d4af37" }, 1.25);
       tl.fromTo("#pointer", { y: -14 }, { y: 0, duration: 0.2, ease: "power3.out" }, 1.25);
       fx.done("day-dial", tl);
     </script>

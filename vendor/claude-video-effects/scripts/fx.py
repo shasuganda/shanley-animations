@@ -1344,7 +1344,7 @@ def glass_widgets_v2(c, e):
     mw, mh = 360 * u, 220 * u; mx, my = W - 50 * u - mw / 2, cy3 + bh / 2 + 22 * u + mh / 2
     mu = G(mw, mh, mx, my, 40 * u); d = ImageDraw.Draw(mu); A = 96 * u
     t = np.linspace(0, 1, int(A), dtype=np.float32)[:, None, None]
-    art2 = Image.fromarray(np.concatenate([(np.float32(lk([255, 150, 110], [245, 207, 69])) * (1 - t) + np.float32(lk([217, 90, 70], [245, 207, 69])) * t) * np.ones((1, int(A), 1), np.float32), np.full((int(A), int(A), 1), 255, np.float32)], 2).astype(np.uint8), 'RGBA')
+    art2 = Image.fromarray(np.concatenate([(np.float32(lk([255, 150, 110], [212, 175, 55])) * (1 - t) + np.float32(lk([217, 90, 70], [212, 175, 55])) * t) * np.ones((1, int(A), 1), np.float32), np.full((int(A), int(A), 1), 255, np.float32)], 2).astype(np.uint8), 'RGBA')
     am = Image.new('L', art2.size, 0); ImageDraw.Draw(am).rounded_rectangle([0, 0, art2.width - 1, art2.height - 1], 16 * u, fill=255); art2.putalpha(am)
     ad = ImageDraw.Draw(art2)
     for k_ in range(6):
@@ -1994,7 +1994,7 @@ def msg_bubble(c, y, title, body, a):
     lay = Image.new('RGBA', (ww, hh), (0, 0, 0, 0)); d = ImageDraw.Draw(lay); v = s * u; al = int(255 * clamp(a * 2.5))
     d.rounded_rectangle([1, 1, ww - 2, hh - 2], int(70 * v), outline=(255, 255, 255, int(170 * clamp(a * 2.5))), width=max(1, int(3 * v)))
     ic = np.linspace(0, 1, int(160 * v), dtype=np.float32)[:, None]
-    icon = np.dstack(lk([110 - ic * 64, 232 - ic * 51, 120 - ic * 51], [245 + ic * 0, 207 + ic * 0, 69 + ic * 0]) + [np.full_like(ic, 255)]).repeat(int(160 * v), 1).astype(np.uint8)
+    icon = np.dstack(lk([110 - ic * 64, 232 - ic * 51, 120 - ic * 51], [212 + ic * 0, 175 + ic * 0, 55 + ic * 0]) + [np.full_like(ic, 255)]).repeat(int(160 * v), 1).astype(np.uint8)
     icon = Image.fromarray(icon, 'RGBA'); im_ = Image.new('L', icon.size, 0); ImageDraw.Draw(im_).rounded_rectangle([0, 0, icon.width - 1, icon.height - 1], int(40 * v), fill=al); icon.putalpha(im_)
     ImageDraw.Draw(icon).ellipse([30 * v, 34 * v, 130 * v, 114 * v], fill=(255, 255, 255, al)); ImageDraw.Draw(icon).polygon([(44 * v, 102 * v), (36 * v, 130 * v), (72 * v, 110 * v)], fill=(255, 255, 255, al))
     lay.alpha_composite(icon, (int(56 * v), int(70 * v)))

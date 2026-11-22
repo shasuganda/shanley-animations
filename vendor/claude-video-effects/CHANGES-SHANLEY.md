@@ -8,5 +8,6 @@ Changed in November 2026:
 - `scripts/fx.py`: a `--style` switch (`forest` is the default, `original` gives the look the effects shipped with), and a few room tints that differ between the two styles.
 - `fonts/`: Instrument Serif Regular and Geist Mono Medium added (SIL Open Font Licence; texts in this folder).
 - `requirements.txt`: fonttools added.
+- `scripts/words.py`: the sound is read with ffmpeg before transcribing, which fixes a crash on fresh installs.
 
 The 51 effects themselves, their motion and their layouts are the original author's work.

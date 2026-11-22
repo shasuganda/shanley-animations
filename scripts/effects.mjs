@@ -234,7 +234,7 @@ export const EFFECTS = {
     about: "Comic-book hit on one word: a negative flash, then an ink-and-speed-lines frame, then a hard punch-in",
     settings: {
       at: [0.5, "Seconds into the stretch when it hits"],
-      colour: ["#f5cf45", "Colour of the speed-lines frame"],
+      colour: ["#d4af37", "Colour of the speed-lines frame"],
       punch: [0.35, "Seconds the punch-in holds after the hit (0: none)"],
       zoom: [14, "How far the punch-in pushes, as a percent"],
     },

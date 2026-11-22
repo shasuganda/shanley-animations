@@ -176,15 +176,15 @@ html.overlay body {
   color: #a98ba3;
 }
 
-/* The forest look from the "Editing with Claude" video: forest green, cream type, yellow accent. */
+/* The forest look from the "Editing with Claude" video: forest green, cream type, gold accent. */
 html.forest {
   --plum: #14201a;
-  --blush: #f5cf45;
+  --blush: #d4af37;
   --cream: #f0e8e0;
 }
 html.forest .caption-box {
   box-shadow: 0 0 0 1px rgba(240, 232, 224, 0.14), 0 18px 40px rgba(0, 0, 0, 0.35);
 }
 html.forest .caption-box em {
-  color: #f5cf45;
+  color: #d4af37;
 }

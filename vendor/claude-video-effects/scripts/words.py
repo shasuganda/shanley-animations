@@ -21,7 +21,10 @@ except ImportError:
         subprocess.run([sys.executable, '-m', 'pip', 'install', '-q', 'faster-whisper'], check=True)
         from faster_whisper import WhisperModel
     model = WhisperModel(os.environ.get('WHISPER_MODEL', 'base'), device='cpu', compute_type='int8')
-    segs, _ = model.transcribe(src, word_timestamps=True, vad_filter=True)
+    # Read the sound with ffmpeg ourselves: the transcriber's own reader breaks with some versions of its audio library.
+    import numpy as np
+    pcm = subprocess.run(['ffmpeg', '-v', 'error', '-i', src, '-vn', '-ac', '1', '-ar', '16000', '-f', 'f32le', '-'], capture_output=True, check=True).stdout
+    segs, _ = model.transcribe(np.frombuffer(pcm, np.float32), word_timestamps=True, vad_filter=True)
     words = [{'w': w.word.strip(), 's': round(w.start, 2), 'e': round(w.end, 2)} for s in segs for w in (s.words or [])]
 
 json.dump(words, open(out, 'w'), indent=0)

@@ -46,7 +46,7 @@ node scripts/effect.mjs list
 node scripts/effect.mjs paper-tear --video take.mp4 --from 12 --to 15 --set "word=The *truth*"
 ```
 
-The drawn effects use the forest look from the "Editing with Claude" video (forest green, cream type, yellow accent). Add `--set look=plum` for the site colours.
+The drawn effects use the forest look from the "Editing with Claude" video (forest green, cream type, gold accent). Add `--set look=plum` for the site colours.
 
 You are cut out of the shot on your own computer, so things can sit behind you. Your sound is kept as it is. The first run on a stretch takes about a minute; after that, trying other settings on the same stretch takes seconds. `renders/all-effects-sheet.jpg` shows one frame of each.
 
