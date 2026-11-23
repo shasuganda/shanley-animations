@@ -9,5 +9,6 @@ Changed in November 2026:
 - `fonts/`: Instrument Serif Regular and Geist Mono Medium added (SIL Open Font Licence; texts in this folder).
 - `requirements.txt`: fonttools added.
 - `scripts/words.py`: the sound is read with ffmpeg before transcribing, which fixes a crash on fresh installs.
+- `scripts/fx.py`: `lineup` keeps its end tiles inside the frame; `headline-wall` takes a `handle` option for the name on the cards; `place-in-grid` hides the view counts when `views` is blank.
 
 The 51 effects themselves, their motion and their layouts are the original author's work.

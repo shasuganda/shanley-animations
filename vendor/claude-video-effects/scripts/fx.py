@@ -254,7 +254,8 @@ def fx_lineup(c, e):
     n = len(tiles); outer = math.ceil(n / 2 + 0.5); inner = n - outer
     cx, cy = c.W / 2 * 0.6 + c.fx * 0.4, c.fy + c.fw * 0.3
     slots = []
-    for row, cnt, R in ((0, outer, c.W * 0.47), (1, inner, c.W * 0.33)):
+    Ro = min(c.W * 0.47, min(cx, c.W - cx) - tw * 0.72)   # keep the end tiles inside the frame
+    for row, cnt, R in ((0, outer, Ro), (1, inner, Ro * 0.7)):
         for k in range(cnt):
             a = math.pi * (0.94 - 0.88 * k / max(1, cnt - 1))
             slots.append((cx + R * math.cos(a), cy - R * math.sin(a) * 1.05, math.degrees(a - math.pi / 2) * 0.3))
@@ -1204,7 +1205,7 @@ def fx_headline_wall(c, e):
         for j, ln in enumerate(lines): d.text((cw * 0.08, cw * 0.07 + j * lh), ln, font=f, fill=fg + (255,))
         my = chh - cw * 0.085; s = cw * 0.04
         d.polygon([(cw * 0.08, my - s / 2), (cw * 0.08, my + s / 2), (cw * 0.08 + s * 0.9, my)], fill=(255, 48, 64, 255))
-        d.text((cw * 0.08 + s * 1.5, my), ('@vibha.in.progress  ·  ' + meta) if meta else '@vibha.in.progress', font=font('uim', cw * 0.045), fill=fg + (170,), anchor='lm')
+        d.text((cw * 0.08 + s * 1.5, my), (e.o.get('handle', '@vibha.in.progress') + '  ·  ' + meta) if meta else e.o.get('handle', '@vibha.in.progress'), font=font('uim', cw * 0.045), fill=fg + (170,), anchor='lm')
         return shadowed(im, 14, 8, 110)
     N = int(e.o.get('count', 13))
     cards = cached(e, 'cards', lambda: [hcard(i) for i in range(N)])
@@ -2035,7 +2036,7 @@ def grid_tile(im, w, h, views, r):
     t = im.convert('RGB'); s = max(w / t.width, h / t.height); t = t.resize((int(t.width * s) + 1, int(t.height * s) + 1), Image.LANCZOS)
     t = t.crop(((t.width - w) // 2, (t.height - h) // 2, (t.width - w) // 2 + w, (t.height - h) // 2 + h)).convert('RGBA')
     mk = Image.new('L', (w, h), 0); ImageDraw.Draw(mk).rounded_rectangle([0, 0, w - 1, h - 1], r, fill=255)
-    if views:
+    if views and views.strip():
         u = w / 660; fd = Image.linear_gradient('L').resize((w, int(h * 0.28))).point(lambda v: int(v * 0.75))
         sh = Image.new('RGBA', fd.size, (0, 0, 0, 0)); sh.putalpha(fd); t.alpha_composite(sh, (0, h - fd.height))
         ic = views_icon(int(56 * u)); x, y = int(34 * u), int(h - 92 * u); t.alpha_composite(ic, (x, y + int(2 * u)))
